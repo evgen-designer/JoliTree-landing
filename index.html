@@ -46,7 +46,7 @@
         
         .select-none { user-select: none; -webkit-user-select: none; }
 
-        /* --- FASTER GRADIENT ANIMATION (3s) --- */
+        /* Gradient Animation */
         @keyframes gradient-shift {
             0%, 100% { background: radial-gradient(circle, #64e6e6 0%, #96dce6cc 30%, #64c8dc4d 50%, #0000 70%); }
             25% { background: radial-gradient(circle, #ffe664 0%, #f0dc78cc 30%, #e6d2824d 50%, #0000 70%); }
@@ -56,6 +56,16 @@
 
         .animate-gradient-cycle {
             animation: gradient-shift 3s ease infinite;
+        }
+
+        /* Download Button Entry Animation */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translate(-50%, 40px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        
+        .animate-fade-in-up {
+            animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
     </style>
 </head>
@@ -86,7 +96,6 @@
         const Button = ({ onClick, children, variant = 'default', className = '' }) => {
             const baseStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50";
             
-            // Removed 'transition-all' to prevent loading weirdness, using specific transitions
             const variants = {
                 default: "bg-slate-900 text-slate-50 hover:bg-slate-900/90 shadow transition-colors duration-200",
                 outline: "border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200",
@@ -259,7 +268,9 @@
                             <button
                                 key={type.id}
                                 onClick={() => onAddOrnament(type.id)}
-                                className="w-full group flex items-center gap-4 p-3 bg-white border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-sm transition-all duration-200 text-left focus:outline-none focus:ring-2 focus:ring-slate-200"
+                                // REMOVED: transition-all
+                                // ADDED: transition-colors, border, shadow handling
+                                className="w-full group flex items-center gap-4 p-3 bg-white border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-sm transition-colors duration-200 text-left focus:outline-none focus:ring-2 focus:ring-slate-200"
                             >
                                 <div className="w-10 h-10 flex items-center justify-center shrink-0">
                                     <img src={type.image} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-200" />
@@ -290,7 +301,7 @@
         }
 
         function App() {
-            // Default with Red Ball (Key updated to v4 to force reset for you)
+            // Default with Red Ball
             const [ornaments, setOrnaments] = useLocalStorage('jolitree-ornaments-v4', [{
                 id: 'init-red', 
                 kind: 'redBall', 
@@ -354,8 +365,8 @@
                         <div className="flex-1 relative w-full h-full overflow-hidden">
                             <TreeCanvas ornaments={ornaments} onPositionUpdate={updateOrnamentPosition} />
 
-                            {/* Floating Button */}
-                            <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
+                            {/* Floating Button (WITH ANIMATION) */}
+                            <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto animate-fade-in-up">
                                 <a href="#" className="px-8 py-4 bg-[#0F172A] hover:bg-[#1E293B] text-white text-lg font-medium rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-transform transition-colors duration-300">
                                     Download for MacOS
                                 </a>
