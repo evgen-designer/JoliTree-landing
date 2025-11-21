@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>JoliTree - Decorate Your Virtual Tree</title>
-    <link rel="icon" href="images/ball-red.png"> <!-- Using the red ball as favicon -->
+    
+    <!-- FAVICON: Matches your file path -->
+    <link rel="icon" href="images/favicon.ico"> 
 
     <!-- META TAGS -->
     <meta name="description" content="Create and decorate your perfect virtual Christmas tree.">
-    <meta property="og:image" content="images/tree.png">
+    <!-- Using the tree background as the social preview image -->
+    <meta property="og:image" content="https://your-username.github.io/jolitree/images/tree-bg.png">
     
     <style>
         /* --- 1. CSS VARIABLES --- */
@@ -33,26 +36,25 @@
         /* --- 2. LAYOUT --- */
         .app-container { display: flex; flex-direction: column; height: 100vh; }
 
-        /* THE CANVAS (Your Tree) */
+        /* THE CANVAS */
         .canvas-area {
             flex: 1;
             position: relative;
             background: radial-gradient(circle at center, #e2e8f0 0%, #94a3b8 100%);
             overflow: hidden;
-            /* Touch Action for Dragging support later */
             touch-action: none; 
         }
 
-        /* The Tree Image Container */
+        /* TREE CONTAINER */
         .tree-container {
             position: absolute;
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
-            height: 90%; /* Adjust based on tree height */
+            height: 90%;
             max-width: 600px;
-            pointer-events: none; /* Let clicks pass through to ornaments */
+            pointer-events: none;
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -66,10 +68,10 @@
             filter: drop-shadow(0 20px 30px rgba(0,0,0,0.2));
         }
 
-        /* Ornaments on the Tree */
+        /* ORNAMENTS ON CANVAS */
         .placed-ornament {
             position: absolute;
-            width: 60px; /* Default size on tree */
+            width: 60px;
             height: 60px;
             cursor: grab;
             transition: transform 0.1s;
@@ -119,7 +121,7 @@
 
         .ornament-label { display: none; font-weight: 500; margin-left: 10px; }
 
-        /* Footer Controls */
+        /* FOOTER */
         .palette-footer { padding: 0.75rem; display: flex; align-items: center; }
         .btn-clear {
             width: 100%; padding: 0.6rem;
@@ -157,16 +159,15 @@
 
     <main class="app-container">
         
-        <!-- 1. CANVAS AREA -->
+        <!-- CANVAS -->
         <section class="canvas-area" id="canvasArea">
-            <!-- The Tree Image -->
             <div class="tree-container">
-                <img src="images/tree.png" alt="Christmas Tree" class="tree-image">
+                <!-- Updated Path: images/tree-bg.png -->
+                <img src="images/tree-bg.png" alt="Christmas Tree" class="tree-image">
             </div>
-            <!-- Ornaments will be injected here by JS -->
         </section>
 
-        <!-- 2. SIDEBAR -->
+        <!-- SIDEBAR -->
         <aside class="palette">
             <header class="palette-header">
                 <h2>JoliTree</h2>
@@ -175,32 +176,37 @@
             <nav class="palette-scroll">
                 
                 <!-- STAR -->
-                <button class="btn-ornament" onclick="addOrnament('star.png')" aria-label="Add Star">
-                    <img src="images/star.png" class="ornament-thumb" alt="">
+                <!-- Updated Path: ornaments/ornament_star.png -->
+                <button class="btn-ornament" onclick="addOrnament('ornaments/ornament_star.png')" aria-label="Add Star">
+                    <img src="images/ornaments/ornament_star.png" class="ornament-thumb" alt="">
                     <span class="ornament-label">Golden Star</span>
                 </button>
 
-                <!-- RED BALL -->
-                <button class="btn-ornament" onclick="addOrnament('ball-red.png')" aria-label="Add Red Ball">
-                    <img src="images/ball-red.png" class="ornament-thumb" alt="">
+                <!-- RED ORNAMENT -->
+                <!-- Updated Path: ornaments/ornament_red.png -->
+                <button class="btn-ornament" onclick="addOrnament('ornaments/ornament_red.png')" aria-label="Add Red Ball">
+                    <img src="images/ornaments/ornament_red.png" class="ornament-thumb" alt="">
                     <span class="ornament-label">Red Ornament</span>
                 </button>
 
-                <!-- BLUE BALL -->
-                <button class="btn-ornament" onclick="addOrnament('ball-blue.png')" aria-label="Add Blue Ball">
-                    <img src="images/ball-blue.png" class="ornament-thumb" alt="">
+                <!-- BLUE ORNAMENT -->
+                <!-- Updated Path: ornaments/ornament_blue.png -->
+                <button class="btn-ornament" onclick="addOrnament('ornaments/ornament_blue.png')" aria-label="Add Blue Ball">
+                    <img src="images/ornaments/ornament_blue.png" class="ornament-thumb" alt="">
                     <span class="ornament-label">Blue Ornament</span>
                 </button>
 
                 <!-- CANDY CANE -->
-                <button class="btn-ornament" onclick="addOrnament('candy-cane.png')" aria-label="Add Candy Cane">
-                    <img src="images/candy-cane.png" class="ornament-thumb" alt="">
+                <!-- Updated Path: ornaments/ornament_candy_cane.png -->
+                <button class="btn-ornament" onclick="addOrnament('ornaments/ornament_candy_cane.png')" aria-label="Add Candy Cane">
+                    <img src="images/ornaments/ornament_candy_cane.png" class="ornament-thumb" alt="">
                     <span class="ornament-label">Candy Cane</span>
                 </button>
 
                 <!-- GIFT -->
-                <button class="btn-ornament" onclick="addOrnament('gift.png')" aria-label="Add Gift">
-                    <img src="images/gift.png" class="ornament-thumb" alt="">
+                <!-- Updated Path: ornaments/ornament_gift.png -->
+                <button class="btn-ornament" onclick="addOrnament('ornaments/ornament_gift.png')" aria-label="Add Gift">
+                    <img src="images/ornaments/ornament_gift.png" class="ornament-thumb" alt="">
                     <span class="ornament-label">Gift Box</span>
                 </button>
 
@@ -215,23 +221,22 @@
     <script>
         const canvas = document.getElementById('canvasArea');
 
-        // Function to Add Ornament
-        function addOrnament(filename) {
+        // Updated logic: 'path' will include the subfolder (e.g., 'ornaments/star.png')
+        function addOrnament(relativePath) {
             const img = document.createElement('img');
-            img.src = `images/${filename}`;
+            
+            // Combining base folder 'images/' with the relative path passed in onclick
+            img.src = `images/${relativePath}`;
             img.classList.add('placed-ornament');
             
-            // Random position near center to start
-            // (Simulating placing it on the tree)
-            const randomX = 40 + Math.random() * 20; // 40-60% (Centerish)
-            const randomY = 30 + Math.random() * 40; // 30-70% (Middle height)
+            // Random placement near center
+            const randomX = 40 + Math.random() * 20; 
+            const randomY = 30 + Math.random() * 40;
             
             img.style.left = `${randomX}%`;
             img.style.top = `${randomY}%`;
             
-            // Add simple drag functionality
             makeDraggable(img);
-            
             canvas.appendChild(img);
         }
 
@@ -242,21 +247,20 @@
             }
         }
 
-        // Basic Drag and Drop Logic (Desktop + Mobile)
+        // Drag & Drop Logic
         function makeDraggable(el) {
             let isDragging = false;
-            
-            // Mouse Events
+            let startX, startY, initialLeft, initialTop;
+
+            // Mouse
             el.addEventListener('mousedown', startDrag);
             window.addEventListener('mousemove', drag);
             window.addEventListener('mouseup', endDrag);
             
-            // Touch Events (Mobile)
+            // Touch
             el.addEventListener('touchstart', startDrag, {passive: false});
             window.addEventListener('touchmove', drag, {passive: false});
             window.addEventListener('touchend', endDrag);
-
-            let startX, startY, initialLeft, initialTop;
 
             function startDrag(e) {
                 isDragging = true;
@@ -266,14 +270,13 @@
                 startX = clientX;
                 startY = clientY;
                 
-                // Get current percentage positions
                 const rect = el.getBoundingClientRect();
                 const parentRect = canvas.getBoundingClientRect();
                 
                 initialLeft = el.offsetLeft;
                 initialTop = el.offsetTop;
                 
-                e.preventDefault(); // Prevent scrolling on touch
+                e.preventDefault();
             }
 
             function drag(e) {
