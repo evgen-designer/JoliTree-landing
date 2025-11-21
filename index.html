@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>JoliTree - Decorate Your Virtual Tree</title>
-    
-    <!-- FIXED FAVICON -->
-    <!-- Explicitly define type="image/png" -->
     <link rel="icon" type="image/png" href="images/ornaments/ornament_red.png">
     <link rel="apple-touch-icon" href="images/ornaments/ornament_red.png">
 
@@ -49,6 +46,7 @@
         
         .select-none { user-select: none; -webkit-user-select: none; }
 
+        /* --- FASTER GRADIENT ANIMATION (3s) --- */
         @keyframes gradient-shift {
             0%, 100% { background: radial-gradient(circle, #64e6e6 0%, #96dce6cc 30%, #64c8dc4d 50%, #0000 70%); }
             25% { background: radial-gradient(circle, #ffe664 0%, #f0dc78cc 30%, #e6d2824d 50%, #0000 70%); }
@@ -57,7 +55,7 @@
         }
 
         .animate-gradient-cycle {
-            animation: gradient-shift 6s ease infinite;
+            animation: gradient-shift 3s ease infinite;
         }
     </style>
 </head>
@@ -86,11 +84,13 @@
 
         // --- UI COMPONENTS ---
         const Button = ({ onClick, children, variant = 'default', className = '' }) => {
-            const baseStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50";
+            const baseStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50";
+            
+            // Removed 'transition-all' to prevent loading weirdness, using specific transitions
             const variants = {
-                default: "bg-slate-900 text-slate-50 hover:bg-slate-900/90 shadow",
-                outline: "border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900",
-                ghost: "hover:bg-slate-100 hover:text-slate-900"
+                default: "bg-slate-900 text-slate-50 hover:bg-slate-900/90 shadow transition-colors duration-200",
+                outline: "border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200",
+                ghost: "hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200"
             };
             return (
                 <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`}>
@@ -290,8 +290,8 @@
         }
 
         function App() {
-            // Default with Red Ball
-            const [ornaments, setOrnaments] = useLocalStorage('jolitree-ornaments-v3', [{
+            // Default with Red Ball (Key updated to v4 to force reset for you)
+            const [ornaments, setOrnaments] = useLocalStorage('jolitree-ornaments-v4', [{
                 id: 'init-red', 
                 kind: 'redBall', 
                 x: 0.55, 
@@ -356,7 +356,7 @@
 
                             {/* Floating Button */}
                             <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
-                                <a href="#" className="px-8 py-4 bg-[#0F172A] hover:bg-[#1E293B] text-white text-lg font-medium rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                                <a href="#" className="px-8 py-4 bg-[#0F172A] hover:bg-[#1E293B] text-white text-lg font-medium rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-transform transition-colors duration-300">
                                     Download for MacOS
                                 </a>
                             </div>
