@@ -4,360 +4,296 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>JoliTree - Decorate Your Virtual Tree</title>
+    <link rel="icon" href="images/ball-red.png"> <!-- Using the red ball as favicon -->
 
-    <!-- FAVICONS (Placeholders) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎄</text></svg>">
+    <!-- META TAGS -->
+    <meta name="description" content="Create and decorate your perfect virtual Christmas tree.">
+    <meta property="og:image" content="images/tree.png">
     
-    <!-- META TAGS (SEO & Social) -->
-    <meta name="description" content="Create and decorate your perfect virtual Christmas tree with JoliTree. Drag, drop, and share the holiday spirit.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://your-username.github.io/jolitree/">
-    <meta property="og:title" content="JoliTree - Decorate Your Virtual Tree">
-    <meta property="og:description" content="Create and decorate your perfect virtual Christmas tree with JoliTree.">
-    <meta property="og:image" content="https://your-username.github.io/jolitree/preview.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="theme-color" content="#ffffff">
-
-    <!-- STRUCTURED DATA -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "JoliTree",
-      "url": "https://your-username.github.io/jolitree/",
-      "applicationCategory": "Entertainment",
-      "description": "A virtual Christmas tree decoration app."
-    }
-    </script>
-
     <style>
-        /* --- 1. CSS RESET & VARIABLES --- */
+        /* --- 1. CSS VARIABLES --- */
         :root {
-            --color-bg: #f8fafc;         /* slate-50 */
+            --color-bg: #cbd5e1;
             --color-surface: rgba(255, 255, 255, 0.85);
-            --color-border: #e2e8f0;     /* slate-200 */
-            --color-text-main: #1e293b;  /* slate-800 */
-            --color-text-muted: #64748b; /* slate-500 */
-            --color-hover: #f1f5f9;      /* slate-100 */
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --radius-md: 0.375rem;       /* 6px */
-            --radius-full: 9999px;
-            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --color-border: #e2e8f0;
+            --color-text: #1e293b;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body, html {
-            height: 100%;
-            width: 100%;
+            height: 100%; width: 100%;
             font-family: var(--font-sans);
-            color: var(--color-text-main);
-            overflow: hidden; /* Prevent scroll on body, handle in containers */
-            background-color: #cbd5e1; /* Darker background to show glass effect */
+            color: var(--color-text);
+            overflow: hidden;
+            background-color: var(--color-bg);
         }
 
-        /* --- 2. LAYOUT STRUCTURE --- */
-        /* The main app container mimics a desktop dashboard or mobile app view */
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+        /* --- 2. LAYOUT --- */
+        .app-container { display: flex; flex-direction: column; height: 100vh; }
 
-        /* The "Canvas" area - placeholder for the tree */
+        /* THE CANVAS (Your Tree) */
         .canvas-area {
             flex: 1;
-            background: radial-gradient(circle at center, #1a2e1a 0%, #0f1a0f 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255,255,255,0.5);
-            font-size: 1.2rem;
             position: relative;
+            background: radial-gradient(circle at center, #e2e8f0 0%, #94a3b8 100%);
+            overflow: hidden;
+            /* Touch Action for Dragging support later */
+            touch-action: none; 
         }
 
-        /* --- 3. ORNAMENT PALETTE (The Component) --- */
-        /* Mimicking: bg-white/80 backdrop-blur-sm border-slate-200 */
+        /* The Tree Image Container */
+        .tree-container {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 90%; /* Adjust based on tree height */
+            max-width: 600px;
+            pointer-events: none; /* Let clicks pass through to ornaments */
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .tree-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: bottom center;
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.2));
+        }
+
+        /* Ornaments on the Tree */
+        .placed-ornament {
+            position: absolute;
+            width: 60px; /* Default size on tree */
+            height: 60px;
+            cursor: grab;
+            transition: transform 0.1s;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+            user-select: none;
+        }
+        .placed-ornament:active { cursor: grabbing; transform: scale(1.1); }
+
+        /* --- 3. SIDEBAR PALETTE --- */
         .palette {
             background-color: var(--color-surface);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-color: var(--color-border);
-            border-style: solid;
-            border-width: 0;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 0 solid var(--color-border);
             display: flex;
-            z-index: 10;
+            z-index: 100;
         }
 
-        /* SCROLL AREA */
         .palette-scroll {
             display: flex;
             gap: 0.5rem;
             padding: 0.75rem;
             overflow: auto;
-            scrollbar-width: thin; /* Firefox */
         }
 
-        /* BUTTONS (The Ornaments) */
+        /* BUTTONS */
         .btn-ornament {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #ffffff;
+            background: #fff;
             border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            padding: 0.75rem;
-            flex-shrink: 0; /* Prevent squishing */
-            color: var(--color-text-main);
-            text-decoration: none;
-        }
-
-        .btn-ornament:hover {
-            background-color: var(--color-hover);
-        }
-        
-        /* Focus state for Accessibility (Standard Improvement) */
-        .btn-ornament:focus-visible, .btn-clear:focus-visible {
-            outline: 2px solid var(--color-text-main);
-            outline-offset: 2px;
-        }
-
-        .ornament-img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-            display: block;
-        }
-
-        .ornament-label {
-            display: none; /* Hidden on mobile by default */
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        /* HEADER & FOOTER SECTIONS */
-        .palette-header { display: none; } /* Hidden on mobile */
-        
-        .palette-footer {
-            padding: 0.75rem;
-            border-style: solid;
-            border-color: var(--color-border);
-            border-width: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        /* CLEAR BUTTON */
-        .btn-clear {
-            width: 100%;
-            background-color: #ffffff;
-            border: 1px solid var(--color-text-main); /* border-slate-900 */
-            color: var(--color-text-main);
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-full);
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.2s;
-        }
-        .btn-clear:hover { background-color: var(--color-hover); }
-
-        /* --- 4. RESPONSIVE BREAKPOINTS --- */
-        
-        /* MOBILE (Default, handled above) logic recap:
-           - Layout: Column (Canvas top, Palette bottom)
-           - Palette: Row (Horizontal scroll)
-           - Palette borders: Top border
-        */
-        .palette {
-            flex-direction: row;
-            border-top-width: 1px;
-            width: 100%;
-            flex-shrink: 0; /* Don't shrink */
-        }
-        
-        .palette-scroll {
-            flex: 1;
-            flex-direction: row;
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
-
-        .palette-footer {
-            border-left-width: 1px;
+            padding: 0.5rem;
             flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .btn-ornament:hover { background: #f8fafc; transform: translateY(-2px); }
+        .btn-ornament:active { transform: translateY(0); }
+        
+        .ornament-thumb {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
         }
 
-        /* DESKTOP (Min-width: 768px) 
-           Matches Tailwind 'md:' prefix logic
-        */
+        .ornament-label { display: none; font-weight: 500; margin-left: 10px; }
+
+        /* Footer Controls */
+        .palette-footer { padding: 0.75rem; display: flex; align-items: center; }
+        .btn-clear {
+            width: 100%; padding: 0.6rem;
+            border-radius: 99px; border: 1px solid #1e293b;
+            background: transparent; font-weight: 600; cursor: pointer;
+        }
+        .btn-clear:hover { background: #1e293b; color: #fff; }
+
+        /* --- RESPONSIVE --- */
+        /* Mobile (Default) */
+        .palette { flex-direction: row; border-top-width: 1px; width: 100%; }
+        .palette-scroll { flex: 1; flex-direction: row; }
+        .palette-footer { border-left: 1px solid var(--color-border); }
+
+        /* Desktop */
         @media (min-width: 768px) {
-            .app-container {
-                flex-direction: row; /* Sidebar Left, Canvas Right */
-            }
-
-            /* Make Canvas fill remaining width */
+            .app-container { flex-direction: row; }
             .canvas-area { order: 2; }
-
-            /* SIDEBAR STYLING */
             .palette {
-                order: 1;
-                flex-direction: column;
-                height: 100%;
-                width: 280px; /* Fixed width sidebar */
-                border-top-width: 0;
-                border-right-width: 1px;
+                order: 1; flex-direction: column;
+                width: 280px; height: 100%;
+                border-right-width: 1px; border-top-width: 0;
             }
-
-            /* Header appears */
-            .palette-header {
-                display: block;
-                padding: 1rem;
-                border-bottom: 1px solid var(--color-border);
-                text-align: center;
-            }
-            .palette-header h2 {
-                font-size: 1.5rem;
-                font-weight: 700;
-                color: var(--color-text-main);
-            }
-
-            /* Vertical Scroll list */
-            .palette-scroll {
-                flex-direction: column;
-                overflow-y: auto;
-                overflow-x: hidden;
-                padding: 0.75rem;
-                gap: 0.5rem;
-            }
-
-            /* Button styling changes */
-            .btn-ornament {
-                width: 100%;
-                justify-content: flex-start; /* Align left */
-                gap: 0.75rem;
-            }
-
-            .ornament-label {
-                display: inline; /* Show text */
-            }
-
-            /* Footer changes */
-            .palette-footer {
-                border-left-width: 0;
-                border-top-width: 1px;
-            }
+            .palette-header { display: block; padding: 1.5rem; text-align: center; border-bottom: 1px solid var(--color-border); }
+            .palette-scroll { flex-direction: column; overflow-y: auto; }
+            .btn-ornament { width: 100%; justify-content: flex-start; padding: 0.75rem; }
+            .ornament-label { display: block; }
+            .palette-footer { border-top: 1px solid var(--color-border); border-left: none; }
         }
+        .palette-header { display: none; }
+        @media (min-width: 768px) { .palette-header { display: block; } }
     </style>
 </head>
 <body>
 
-    <!-- Semantic Main Wrapper -->
     <main class="app-container">
         
-        <!-- 1. THE CANVAS (Placeholder for your 3D/2D Scene) -->
+        <!-- 1. CANVAS AREA -->
         <section class="canvas-area" id="canvasArea">
-            <p>Tree Canvas Area</p>
-            <div id="ornament-graveyard" style="position: absolute;"></div>
+            <!-- The Tree Image -->
+            <div class="tree-container">
+                <img src="images/tree.png" alt="Christmas Tree" class="tree-image">
+            </div>
+            <!-- Ornaments will be injected here by JS -->
         </section>
 
-        <!-- 2. THE PALETTE (Converted React Component) -->
-        <aside class="palette" aria-label="Ornament Selector">
-            
-            <!-- Desktop Header -->
+        <!-- 2. SIDEBAR -->
+        <aside class="palette">
             <header class="palette-header">
                 <h2>JoliTree</h2>
             </header>
 
-            <!-- Scrollable List -->
-            <!-- Semantic: Use a Nav or UL for a list of choices -->
-            <nav class="palette-scroll" role="list" aria-label="Available Ornaments">
+            <nav class="palette-scroll">
                 
-                <!-- Ornament 1: Red Ball -->
-                <button class="btn-ornament" onclick="addOrnament('Red Ball')" aria-label="Add Red Ball Ornament">
-                    <!-- Explicit dimensions for performance -->
-                    <img src="https://api.iconify.design/noto:christmas-tree.svg" width="40" height="40" alt="" class="ornament-img">
-                    <span class="ornament-label">Classic Tree</span>
-                </button>
-
-                <!-- Ornament 2: Star -->
-                <button class="btn-ornament" onclick="addOrnament('Golden Star')" aria-label="Add Golden Star Ornament">
-                    <img src="https://api.iconify.design/noto:star.svg" width="40" height="40" alt="" class="ornament-img">
+                <!-- STAR -->
+                <button class="btn-ornament" onclick="addOrnament('star.png')" aria-label="Add Star">
+                    <img src="images/star.png" class="ornament-thumb" alt="">
                     <span class="ornament-label">Golden Star</span>
                 </button>
 
-                <!-- Ornament 3: Gift -->
-                <button class="btn-ornament" onclick="addOrnament('Blue Gift')" aria-label="Add Blue Gift Ornament">
-                    <img src="https://api.iconify.design/noto:wrapped-gift.svg" width="40" height="40" alt="" class="ornament-img">
-                    <span class="ornament-label">Wrapped Gift</span>
+                <!-- RED BALL -->
+                <button class="btn-ornament" onclick="addOrnament('ball-red.png')" aria-label="Add Red Ball">
+                    <img src="images/ball-red.png" class="ornament-thumb" alt="">
+                    <span class="ornament-label">Red Ornament</span>
                 </button>
 
-                <!-- Ornament 4: Bell -->
-                <button class="btn-ornament" onclick="addOrnament('Jingle Bell')" aria-label="Add Jingle Bell Ornament">
-                    <img src="https://api.iconify.design/noto:bell.svg" width="40" height="40" alt="" class="ornament-img">
-                    <span class="ornament-label">Jingle Bell</span>
+                <!-- BLUE BALL -->
+                <button class="btn-ornament" onclick="addOrnament('ball-blue.png')" aria-label="Add Blue Ball">
+                    <img src="images/ball-blue.png" class="ornament-thumb" alt="">
+                    <span class="ornament-label">Blue Ornament</span>
                 </button>
 
-                 <!-- Ornament 5: Santa -->
-                 <button class="btn-ornament" onclick="addOrnament('Santa')" aria-label="Add Santa Ornament">
-                    <img src="https://api.iconify.design/noto:santa-claus.svg" width="40" height="40" alt="" class="ornament-img">
-                    <span class="ornament-label">Santa Claus</span>
+                <!-- CANDY CANE -->
+                <button class="btn-ornament" onclick="addOrnament('candy-cane.png')" aria-label="Add Candy Cane">
+                    <img src="images/candy-cane.png" class="ornament-thumb" alt="">
+                    <span class="ornament-label">Candy Cane</span>
+                </button>
+
+                <!-- GIFT -->
+                <button class="btn-ornament" onclick="addOrnament('gift.png')" aria-label="Add Gift">
+                    <img src="images/gift.png" class="ornament-thumb" alt="">
+                    <span class="ornament-label">Gift Box</span>
                 </button>
 
             </nav>
 
-            <!-- Footer Controls -->
             <footer class="palette-footer">
-                <button class="btn-clear" onclick="clearAllOrnaments()">
-                    Clear all
-                </button>
+                <button class="btn-clear" onclick="clearAll()">Clear All</button>
             </footer>
-
         </aside>
     </main>
 
-    <!-- ANALYTICS & SCRIPTS -->
     <script>
-        // Minimal Logic to mimic React functionality for the demo
-        function addOrnament(kind) {
-            console.log(`Added ornament: ${kind}`);
+        const canvas = document.getElementById('canvasArea');
+
+        // Function to Add Ornament
+        function addOrnament(filename) {
+            const img = document.createElement('img');
+            img.src = `images/${filename}`;
+            img.classList.add('placed-ornament');
             
-            // Visual feedback simulation
-            const canvas = document.getElementById('canvasArea');
-            const feedback = document.createElement('div');
-            feedback.innerText = `Added ${kind}!`;
-            feedback.style.position = 'absolute';
-            feedback.style.background = 'rgba(255,255,255,0.9)';
-            feedback.style.padding = '10px 20px';
-            feedback.style.borderRadius = '20px';
-            feedback.style.top = '50%';
-            feedback.style.left = '50%';
-            feedback.style.transform = 'translate(-50%, -50%)';
-            feedback.style.animation = 'fadeOut 1.5s ease forwards';
+            // Random position near center to start
+            // (Simulating placing it on the tree)
+            const randomX = 40 + Math.random() * 20; // 40-60% (Centerish)
+            const randomY = 30 + Math.random() * 40; // 30-70% (Middle height)
             
-            canvas.appendChild(feedback);
-            setTimeout(() => feedback.remove(), 1500);
+            img.style.left = `${randomX}%`;
+            img.style.top = `${randomY}%`;
+            
+            // Add simple drag functionality
+            makeDraggable(img);
+            
+            canvas.appendChild(img);
         }
 
-        function clearAllOrnaments() {
-            const confirmClear = confirm("Are you sure you want to clear all ornaments?");
-            if(confirmClear) {
-                console.log("Cleared all ornaments");
+        function clearAll() {
+            if(confirm('Remove all decorations?')) {
+                const ornaments = document.querySelectorAll('.placed-ornament');
+                ornaments.forEach(o => o.remove());
             }
         }
 
-        // Simple fade out animation for the interaction feedback
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes fadeOut {
-                0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-                100% { opacity: 0; transform: translate(-50%, -60%) scale(1.1); }
+        // Basic Drag and Drop Logic (Desktop + Mobile)
+        function makeDraggable(el) {
+            let isDragging = false;
+            
+            // Mouse Events
+            el.addEventListener('mousedown', startDrag);
+            window.addEventListener('mousemove', drag);
+            window.addEventListener('mouseup', endDrag);
+            
+            // Touch Events (Mobile)
+            el.addEventListener('touchstart', startDrag, {passive: false});
+            window.addEventListener('touchmove', drag, {passive: false});
+            window.addEventListener('touchend', endDrag);
+
+            let startX, startY, initialLeft, initialTop;
+
+            function startDrag(e) {
+                isDragging = true;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                
+                startX = clientX;
+                startY = clientY;
+                
+                // Get current percentage positions
+                const rect = el.getBoundingClientRect();
+                const parentRect = canvas.getBoundingClientRect();
+                
+                initialLeft = el.offsetLeft;
+                initialTop = el.offsetTop;
+                
+                e.preventDefault(); // Prevent scrolling on touch
             }
-        `;
-        document.head.appendChild(style);
+
+            function drag(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+
+                el.style.left = `${initialLeft + dx}px`;
+                el.style.top = `${initialTop + dy}px`;
+            }
+
+            function endDrag() {
+                isDragging = false;
+            }
+        }
     </script>
 </body>
 </html>
