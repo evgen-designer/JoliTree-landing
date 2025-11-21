@@ -32,7 +32,7 @@
         }
     </script>
 
-    <!-- 3. CUSTOM CSS (Animation & Scrollbars) -->
+    <!-- 3. CUSTOM CSS (Animations & Scrollbars) -->
     <style>
         /* Hide Scrollbars */
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -46,16 +46,16 @@
         
         .select-none { user-select: none; -webkit-user-select: none; }
 
-        /* --- RESTORED ANIMATION --- */
+        /* --- GRADIENT COLOR CHANGE ANIMATION --- */
         @keyframes gradient-shift {
-            0%, 100% { background: radial-gradient(circle, rgba(100, 230, 230, 1) 0%, rgba(150, 220, 230, 0.8) 30%, rgba(100, 200, 220, 0.3) 50%, transparent 70%); }
-            25% { background: radial-gradient(circle, rgba(255, 230, 100, 1) 0%, rgba(240, 220, 120, 0.8) 30%, rgba(230, 210, 130, 0.3) 50%, transparent 70%); }
-            50% { background: radial-gradient(circle, rgba(255, 120, 120, 1) 0%, rgba(240, 130, 140, 0.8) 30%, rgba(230, 140, 150, 0.3) 50%, transparent 70%); }
-            75% { background: radial-gradient(circle, rgba(180, 150, 255, 1) 0%, rgba(190, 160, 240, 0.8) 30%, rgba(170, 150, 230, 0.3) 50%, transparent 70%); }
+            0%, 100% { background: radial-gradient(circle, #64e6e6 0%, #96dce6cc 30%, #64c8dc4d 50%, #0000 70%); }
+            25% { background: radial-gradient(circle, #ffe664 0%, #f0dc78cc 30%, #e6d2824d 50%, #0000 70%); }
+            50% { background: radial-gradient(circle, #ff7878 0%, #f0828ccc 30%, #e68c964d 50%, #0000 70%); }
+            75% { background: radial-gradient(circle, #b496ff 0%, #bea0f0cc 30%, #aa96e64d 50%, #0000 70%); }
         }
 
-        .animate-gradient-glow {
-            animation: gradient-shift 8s ease-in-out infinite;
+        .animate-gradient-cycle {
+            animation: gradient-shift 10s ease infinite;
         }
     </style>
 </head>
@@ -180,7 +180,7 @@
             );
         }
 
-        // 2. TreeCanvas (Updated with Animation)
+        // 2. TreeCanvas (With Correct Animation)
         function TreeCanvas({ ornaments, onPositionUpdate }) {
             const treeRef = useRef(null);
             const canvasRef = useRef(null);
@@ -208,11 +208,12 @@
             }, []);
 
             return (
-                <div ref={canvasRef} className="relative w-full h-full flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/30 to-white">
+                <div ref={canvasRef} className="relative w-full h-full flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white">
                     
-                    {/* --- RESTORED GRADIENT ANIMATION --- */}
+                    {/* --- BACKGROUND ANIMATION LAYER --- */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                        <div className="w-[600px] h-[600px] rounded-full opacity-60 blur-[80px] animate-gradient-glow"></div>
+                        {/* This div runs the keyframe animation */}
+                        <div className="w-[600px] h-[600px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
                     </div>
 
                     {/* Tree Image */}
@@ -315,19 +316,19 @@
                     {/* Main Content */}
                     <main className="flex-1 relative h-full flex flex-col" data-canvas>
                         
-                        {/* --- TOP RIGHT HEADER (UPDATED LAYOUT) --- */}
+                        {/* --- TOP RIGHT HEADER (CORRECT LAYOUT) --- */}
                         <div className="absolute top-0 right-0 left-0 p-6 flex justify-between md:justify-end items-start z-30 pointer-events-none">
                             {/* Mobile Logo */}
                             <span className="md:hidden text-xl font-bold text-slate-900 pointer-events-auto">JoliTree</span>
                             
-                            {/* Desktop Links & Copyright Stacked */}
+                            {/* Desktop Layout: Stacked Links & Copyright */}
                             <div className="hidden md:flex flex-col items-end gap-1 pointer-events-auto">
-                                <nav className="flex gap-4 text-sm font-medium text-slate-600">
+                                <nav className="flex gap-5 text-[15px] font-medium text-slate-600">
                                     <a href="#" className="hover:text-slate-900 transition-colors">Contact</a>
                                     <a href="#" className="hover:text-slate-900 transition-colors">Privacy</a>
                                     <a href="#" className="hover:text-slate-900 transition-colors">Terms</a>
                                 </nav>
-                                <div className="text-[10px] text-slate-400">
+                                <div className="text-[11px] text-slate-400 tracking-wide">
                                     © 2025 JoliTree. All rights reserved.
                                 </div>
                             </div>
