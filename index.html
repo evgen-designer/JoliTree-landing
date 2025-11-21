@@ -210,25 +210,25 @@
                         <div className="w-[600px] h-[600px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
                     </div>
 
-                    {/* --- BACKGROUND TEXT LAYER (Added) --- */}
-                    <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none hidden md:flex">
-                        {/* Left Text */}
-                        <div className="absolute left-[8%] lg:left-[12%] text-right translate-y-[-20%]">
-                            <h1 className="text-[3rem] lg:text-[4.5rem] font-black tracking-tighter text-slate-900 leading-[0.9]">
+                    {/* --- BACKGROUND TEXT LAYER (Adjusted Positioning) --- */}
+                    <div className="absolute inset-0 w-full h-full z-0 pointer-events-none select-none hidden md:block">
+                        {/* Left Text - Pushed to far left edge */}
+                        <div className="absolute left-[2%] xl:left-[5%] top-1/2 -translate-y-[60%] text-right z-0">
+                            <h1 className="text-[3.5rem] lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter text-slate-900 leading-[0.85]">
                                 DECORATE<br/>YOUR<br/>MAC
                             </h1>
                         </div>
 
-                        {/* Right Text */}
-                        <div className="absolute right-[8%] lg:right-[12%] text-left translate-y-[-5%]">
-                            <h1 className="text-[3rem] lg:text-[4.5rem] font-black tracking-tighter text-slate-900 leading-[0.9]">
+                        {/* Right Text - Pushed to far right edge */}
+                        <div className="absolute right-[2%] xl:right-[5%] top-1/2 -translate-y-[30%] text-left z-0">
+                            <h1 className="text-[3.5rem] lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter text-slate-900 leading-[0.85]">
                                 WORK<br/>WITH<br/>FESTIVE<br/>VIBE
                             </h1>
                         </div>
                     </div>
 
-                    {/* Tree Image */}
-                    <div className="relative z-10 h-[85%] max-w-[90%] flex items-end justify-center pb-20 md:pb-0">
+                    {/* Tree Image - Constrained max-width so it doesn't overlap text */}
+                    <div className="relative z-10 h-[85%] max-w-[600px] w-full flex items-end justify-center pb-20 md:pb-0">
                         <img
                             ref={treeRef}
                             src={TREE_IMAGE}
