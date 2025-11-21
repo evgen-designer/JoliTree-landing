@@ -2,16 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Contact - JoliTree</title>
     
-    <!-- Favicon (pointing up one level to root images folder) -->
     <link rel="icon" type="image/png" href="../images/ornaments/ornament_red.png">
+    <link rel="apple-touch-icon" href="../images/ornaments/ornament_red.png">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Tailwind Config to match main site -->
     <script>
         tailwind.config = {
             theme: {
@@ -32,57 +31,102 @@
     </script>
 
     <style>
-        body {
+        body { 
+            overscroll-behavior: none; 
             background-color: #F8FAFC;
             -webkit-font-smoothing: antialiased;
         }
+        /* Hide Scrollbars */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
 
-    <!-- HEADER -->
-    <header class="w-full max-w-5xl mx-auto p-6 flex justify-between items-center">
-        <!-- Logo: Links back to home -->
-        <a href="../index.html" class="text-xl font-bold text-slate-900 hover:opacity-80 transition-opacity">
-            JoliTree
-        </a>
+    <div class="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-[#F8FAFC]">
+        
+        <!-- 1. SIDEBAR (Matches Main Page Width & Style) -->
+        <div class="hidden md:block w-[280px] shrink-0 h-full bg-white border-r border-slate-200 relative z-20 shadow-xl shadow-slate-200/50">
+            <div class="p-6 border-b border-slate-100">
+                <a href="../index.html" class="text-slate-900 text-2xl font-bold tracking-tight hover:opacity-80 transition-opacity">
+                    JoliTree
+                </a>
+            </div>
+            <!-- Empty sidebar body for Contact page -->
+            <div class="p-6 text-sm text-slate-400">
+                <!-- Optional: You could put navigation links here if you wanted, but keeping it clean focuses on the card -->
+            </div>
+        </div>
 
-        <!-- Navigation -->
-        <nav class="flex gap-5 text-[15px] font-medium text-slate-600">
-            <a href="#" class="text-slate-900">Contact</a>
-            <a href="../privacy/" class="hover:text-slate-900 transition-colors">Privacy</a>
-            <a href="../terms/" class="hover:text-slate-900 transition-colors">Terms</a>
-        </nav>
-    </header>
-
-    <!-- MAIN CONTENT -->
-    <main class="flex-1 flex items-center justify-center px-4 pb-20">
-        <div class="max-w-2xl w-full bg-white p-8 md:p-12 rounded-[32px] shadow-sm border border-slate-100 text-center">
+        <!-- 2. MAIN CONTENT AREA -->
+        <main class="flex-1 relative h-full flex flex-col items-center justify-center p-4 overflow-y-auto">
             
-            <h1 class="text-3xl font-bold text-slate-900 mb-6">Welcome to JoliTree!</h1>
-            
-            <div class="space-y-6 text-slate-600 leading-relaxed text-lg">
-                <p>
-                    I'm Eugene Evgen, the creator of <span class="font-semibold text-slate-900">JoliTree</span> - a tiny, joyful Christmas tree that lives on your Mac desktop and brings a festive vibe to your workspace. Decorate it, customize it, and enjoy a little holiday spirit while you work.
-                </p>
+            <!-- TOP HEADER (Matches Main Page Exactly) -->
+            <div class="absolute top-0 right-0 left-0 p-6 flex justify-between md:justify-end items-start z-30 pointer-events-none">
                 
-                <p>
-                    If you have questions, feedback, or need support, feel free to reach me at:
-                </p>
-
-                <div class="py-2">
-                    <a href="mailto:eugene.evgen.contact@gmail.com" class="text-xl font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors">
-                        eugene.evgen.contact@gmail.com
-                    </a>
+                <!-- Mobile Logo (Matches Main Page) -->
+                <a href="../index.html" class="md:hidden text-xl font-bold text-slate-900 pointer-events-auto">
+                    JoliTree
+                </a>
+                
+                <!-- Desktop Links & Copyright (Matches Main Page) -->
+                <div class="hidden md:flex flex-col items-center gap-1 pointer-events-auto">
+                    <nav class="flex gap-5 text-[15px] font-medium text-slate-600">
+                        <a href="#" class="text-slate-900 cursor-default">Contact</a>
+                        <a href="../privacy/" class="hover:text-slate-900 transition-colors">Privacy</a>
+                        <a href="../terms/" class="hover:text-slate-900 transition-colors">Terms</a>
+                    </nav>
+                    <div class="text-[10px] text-slate-400 tracking-wide">
+                        © 2025 JoliTree. All rights reserved.
+                    </div>
                 </div>
 
-                <p>
-                    I will get back to you as soon as possible.
-                </p>
+                <!-- Help Icon (Matches Main Page) -->
+                <a href="../index.html" class="md:hidden w-8 h-8 flex items-center justify-center bg-slate-900 text-white rounded-full shadow-md pointer-events-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg>
+                </a>
             </div>
 
-        </div>
-    </main>
+            <!-- CONTACT CONTENT CARD -->
+            <!-- Added z-10 to ensure it sits below the header if screen is small -->
+            <div class="max-w-2xl w-full bg-white p-8 md:p-12 rounded-[32px] shadow-sm border border-slate-100 text-center z-10 mt-16 md:mt-0">
+                
+                <h1 class="text-3xl font-bold text-slate-900 mb-6 tracking-tight">Welcome to JoliTree!</h1>
+                
+                <div class="space-y-6 text-slate-600 leading-relaxed text-lg">
+                    <p>
+                        I'm Eugene Evgen, the creator of <span class="font-semibold text-slate-900">JoliTree</span> - a tiny, joyful Christmas tree that lives on your Mac desktop and brings a festive vibe to your workspace. Decorate it, customize it, and enjoy a little holiday spirit while you work.
+                    </p>
+                    
+                    <p>
+                        If you have questions, feedback, or need support, feel free to reach me at:
+                    </p>
+
+                    <div class="py-2">
+                        <a href="mailto:eugene.evgen.contact@gmail.com" class="text-xl font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors">
+                            eugene.evgen.contact@gmail.com
+                        </a>
+                    </div>
+
+                    <p>
+                        I will get back to you as soon as possible.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Mobile Footer (Matches Main Page logic) -->
+            <div class="md:hidden w-full mt-8 flex flex-col items-center pb-8 text-sm text-gray-600">
+                <div class="flex gap-4 mb-2">
+                    <a href="#" class="text-gray-900 font-medium">Contact</a>
+                    <a href="../privacy/" class="hover:text-gray-900">Privacy</a>
+                    <a href="../terms/" class="hover:text-gray-900">Terms</a>
+                </div>
+                <div class="text-gray-400 text-[10px]">© 2025 JoliTree. All rights reserved.</div>
+            </div>
+
+        </main>
+    </div>
 
 </body>
 </html>
