@@ -32,9 +32,8 @@
         }
     </script>
 
-    <!-- 3. CUSTOM CSS (Animations & Scrollbars) -->
+    <!-- 3. CUSTOM CSS -->
     <style>
-        /* Hide Scrollbars */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -46,7 +45,6 @@
         
         .select-none { user-select: none; -webkit-user-select: none; }
 
-        /* --- GRADIENT COLOR CHANGE ANIMATION --- */
         @keyframes gradient-shift {
             0%, 100% { background: radial-gradient(circle, #64e6e6 0%, #96dce6cc 30%, #64c8dc4d 50%, #0000 70%); }
             25% { background: radial-gradient(circle, #ffe664 0%, #f0dc78cc 30%, #e6d2824d 50%, #0000 70%); }
@@ -97,7 +95,6 @@
             );
         };
 
-        // --- HOOKS ---
         function useLocalStorage(key, initialValue) {
             const [storedValue, setStoredValue] = useState(() => {
                 try {
@@ -119,7 +116,6 @@
 
         // --- FEATURE COMPONENTS ---
 
-        // 1. OrnamentView
         function OrnamentView({ ornament, treeBounds, onPositionUpdate }) {
             const [isDragging, setIsDragging] = useState(false);
             const [isHovered, setIsHovered] = useState(false);
@@ -180,7 +176,6 @@
             );
         }
 
-        // 2. TreeCanvas (With Correct Animation)
         function TreeCanvas({ ornaments, onPositionUpdate }) {
             const treeRef = useRef(null);
             const canvasRef = useRef(null);
@@ -210,10 +205,26 @@
             return (
                 <div ref={canvasRef} className="relative w-full h-full flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white">
                     
-                    {/* --- BACKGROUND ANIMATION LAYER --- */}
+                    {/* Background Animation */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                        {/* This div runs the keyframe animation */}
                         <div className="w-[600px] h-[600px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
+                    </div>
+
+                    {/* --- BACKGROUND TEXT LAYER (Added) --- */}
+                    <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none select-none hidden md:flex">
+                        {/* Left Text */}
+                        <div className="absolute left-[8%] lg:left-[12%] text-right translate-y-[-20%]">
+                            <h1 className="text-[3rem] lg:text-[4.5rem] font-black tracking-tighter text-slate-900 leading-[0.9]">
+                                DECORATE<br/>YOUR<br/>MAC
+                            </h1>
+                        </div>
+
+                        {/* Right Text */}
+                        <div className="absolute right-[8%] lg:right-[12%] text-left translate-y-[-5%]">
+                            <h1 className="text-[3rem] lg:text-[4.5rem] font-black tracking-tighter text-slate-900 leading-[0.9]">
+                                WORK<br/>WITH<br/>FESTIVE<br/>VIBE
+                            </h1>
+                        </div>
                     </div>
 
                     {/* Tree Image */}
@@ -234,7 +245,6 @@
             );
         }
 
-        // 3. OrnamentPalette (Sidebar)
         function OrnamentPalette({ onAddOrnament, onClearAll }) {
             const types = Object.values(ORNAMENT_TYPES);
 
@@ -278,7 +288,6 @@
             );
         }
 
-        // --- MAIN APPLICATION ---
         function App() {
             const [ornaments, setOrnaments] = useLocalStorage('jolitree-ornaments-v2', []);
 
@@ -303,7 +312,7 @@
             return (
                 <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-[#F8FAFC]">
                     
-                    {/* Mobile Header Download */}
+                    {/* Mobile Header */}
                     <div className="md:hidden flex justify-center py-4 bg-gradient-to-b from-slate-100 via-slate-50 to-white z-10">
                         <a href="#" className="px-6 py-2.5 bg-slate-900 text-white rounded-full text-sm font-medium shadow-lg">Download for MacOS</a>
                     </div>
@@ -316,24 +325,17 @@
                     {/* Main Content */}
                     <main className="flex-1 relative h-full flex flex-col" data-canvas>
                         
-                        {/* --- TOP RIGHT HEADER (CORRECT LAYOUT) --- */}
+                        {/* Header Links */}
                         <div className="absolute top-0 right-0 left-0 p-6 flex justify-between md:justify-end items-start z-30 pointer-events-none">
-                            {/* Mobile Logo */}
                             <span className="md:hidden text-xl font-bold text-slate-900 pointer-events-auto">JoliTree</span>
-                            
-                            {/* Desktop Layout: Stacked Links & Copyright */}
                             <div className="hidden md:flex flex-col items-end gap-1 pointer-events-auto">
                                 <nav className="flex gap-5 text-[15px] font-medium text-slate-600">
                                     <a href="#" className="hover:text-slate-900 transition-colors">Contact</a>
                                     <a href="#" className="hover:text-slate-900 transition-colors">Privacy</a>
                                     <a href="#" className="hover:text-slate-900 transition-colors">Terms</a>
                                 </nav>
-                                <div className="text-[11px] text-slate-400 tracking-wide">
-                                    © 2025 JoliTree. All rights reserved.
-                                </div>
+                                <div className="text-[11px] text-slate-400 tracking-wide">© 2025 JoliTree. All rights reserved.</div>
                             </div>
-
-                            {/* Mobile Help Icon */}
                             <button className="md:hidden w-8 h-8 flex items-center justify-center bg-slate-900 text-white rounded-full shadow-md pointer-events-auto">
                                 <HelpIcon />
                             </button>
@@ -343,7 +345,7 @@
                         <div className="flex-1 relative w-full h-full overflow-hidden">
                             <TreeCanvas ornaments={ornaments} onPositionUpdate={updateOrnamentPosition} />
 
-                            {/* Desktop Floating Button */}
+                            {/* Floating Button */}
                             <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
                                 <a href="#" className="px-8 py-4 bg-[#0F172A] hover:bg-[#1E293B] text-white text-lg font-medium rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
                                     Download for MacOS
@@ -356,7 +358,7 @@
                             <OrnamentPalette onAddOrnament={addOrnament} onClearAll={resetOrnaments} />
                         </div>
 
-                        {/* Mobile Footer Links */}
+                        {/* Mobile Footer */}
                          <div className="md:hidden flex flex-col items-center py-4 text-sm text-gray-600 bg-white border-t border-slate-200 z-20">
                             <div className="flex gap-4 mb-2">
                                 <a href="#" className="hover:text-gray-900">Contact</a>
