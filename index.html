@@ -67,6 +67,11 @@
         .animate-fade-in-up {
             animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
+
+        /* Safe Area for iPhone X+ */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
     </style>
 </head>
 <body>
@@ -246,19 +251,19 @@
                     {/* --- TREE & MOBILE TEXT CONTAINER --- */}
                     <div className="relative z-10 flex flex-col items-center justify-center h-full w-full md:block md:h-[85%] md:w-auto">
                         
-                        {/* Tree Image */}
+                        {/* Tree Image: Smaller max-height on mobile (40vh) */}
                         <div className="flex-1 flex items-center md:items-end justify-center w-full h-full md:h-full md:max-w-[600px] md:pb-0">
                             <img
                                 ref={treeRef}
                                 src={TREE_IMAGE}
                                 alt="Christmas Tree"
-                                className="max-h-[55vh] md:max-h-full md:h-full w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
+                                className="max-h-[40vh] md:max-h-full md:h-full w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
                             />
                         </div>
 
-                        {/* Mobile Text (Displayed BELOW tree) */}
-                        <div className="md:hidden mt-4 mb-8 text-center z-0">
-                            <h1 className="text-[2rem] font-black tracking-tighter text-slate-900/30 leading-none">
+                        {/* Mobile Text (Displayed BELOW tree, not overlapping) */}
+                        <div className="md:hidden mt-2 mb-4 text-center z-0 px-4">
+                            <h1 className="text-[2.2rem] font-black tracking-tighter text-slate-900/20 leading-none">
                                 DECORATE YOUR MAC
                             </h1>
                         </div>
@@ -325,8 +330,8 @@
                             Clear all
                         </Button>
 
-                        {/* MOBILE FOOTER LINKS - Strictly under Clear All */}
-                        <div className="md:hidden flex flex-col items-center gap-2 pt-1">
+                        {/* MOBILE FOOTER LINKS & COPYRIGHT - Pushed down here */}
+                        <div className="md:hidden flex flex-col items-center gap-3 pt-1 pb-4">
                             <div className="flex gap-4 text-sm font-medium text-slate-500">
                                 <a href="contact/" className="hover:text-slate-900 transition-colors">Contact</a>
                                 <a href="privacy/" className="hover:text-slate-900 transition-colors">Privacy</a>
@@ -368,10 +373,10 @@
             const resetOrnaments = () => { if(confirm("Remove all ornaments?")) setOrnaments([]); };
 
             return (
-                <div className="h-screen w-full flex flex-col md:flex-row overflow-hidden bg-[#F8FAFC]">
+                <div className="h-[100dvh] w-full flex flex-col md:flex-row overflow-hidden bg-[#F8FAFC]">
                     
                     {/* Mobile Header */}
-                    <div className="md:hidden flex justify-center py-4 bg-gradient-to-b from-slate-100 via-slate-50 to-white z-10">
+                    <div className="md:hidden flex justify-center py-4 bg-gradient-to-b from-slate-100 via-slate-50 to-white z-10 shrink-0">
                         <a href="#" className="px-6 py-2.5 bg-slate-900 text-white rounded-full text-sm font-medium shadow-lg">Download for MacOS</a>
                     </div>
 
@@ -381,7 +386,7 @@
                     </div>
 
                     {/* Main Content */}
-                    <main className="flex-1 relative h-full flex flex-col" data-canvas>
+                    <main className="flex-1 relative h-full flex flex-col overflow-hidden" data-canvas>
                         
                         {/* Header Links */}
                         <div className="absolute top-0 right-0 left-0 p-6 flex justify-between md:justify-end items-start z-30 pointer-events-none">
@@ -396,7 +401,7 @@
                                     © 2025 JoliTree. All rights reserved.
                                 </div>
                             </div>
-                            {/* Removed Help Icon on Mobile */}
+                            {/* Help Icon - Removed on Mobile */}
                             <button className="hidden md:flex w-8 h-8 items-center justify-center bg-slate-900 text-white rounded-full shadow-md pointer-events-auto">
                                 <HelpIcon />
                             </button>
