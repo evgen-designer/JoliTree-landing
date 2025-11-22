@@ -222,44 +222,46 @@
             }, []);
 
             return (
-                <div ref={canvasRef} className="relative w-full h-full flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white">
+                <div ref={canvasRef} className="relative w-full h-full flex flex-col md:block items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white">
                     
                     {/* Background Animation */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
                         <div className="w-[600px] h-[600px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
                     </div>
 
-                    {/* --- BACKGROUND TEXT LAYER --- */}
-                    <div className="absolute inset-0 w-full h-full z-0 pointer-events-none select-none">
-                        
-                        {/* Desktop Text */}
-                        <div className="hidden md:block absolute left-[2%] xl:left-[5%] top-1/2 -translate-y-[60%] text-right z-0">
+                    {/* --- BACKGROUND TEXT LAYER (DESKTOP) --- */}
+                    <div className="absolute inset-0 w-full h-full z-0 pointer-events-none select-none hidden md:block">
+                        <div className="absolute left-[2%] xl:left-[5%] top-1/2 -translate-y-[60%] text-right z-0">
                             <h1 className="text-[3.5rem] lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter text-slate-900 leading-[0.85] text-center">
                                 DECORATE<br/>YOUR<br/>MAC
                             </h1>
                         </div>
-                        <div className="hidden md:block absolute right-[5%] xl:right-[8%] top-1/2 -translate-y-[30%] text-left z-0">
+                        <div className="absolute right-[5%] xl:right-[8%] top-1/2 -translate-y-[30%] text-left z-0">
                             <h1 className="text-[3.5rem] lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter text-slate-900 leading-[0.85]">
                                 WORK<br/>WITH<br/>FESTIVE<br/>VIBE
                             </h1>
                         </div>
+                    </div>
 
-                        {/* Mobile Text (Single Line below tree) */}
-                        <div className="md:hidden absolute bottom-[25%] left-0 right-0 text-center z-0">
-                            <h1 className="text-[2.5rem] font-black tracking-tighter text-slate-900/20 leading-none">
+                    {/* --- TREE & MOBILE TEXT CONTAINER --- */}
+                    <div className="relative z-10 flex flex-col items-center justify-center h-full w-full md:block md:h-[85%] md:w-auto">
+                        
+                        {/* Tree Image */}
+                        <div className="flex-1 flex items-center md:items-end justify-center w-full h-full md:h-full md:max-w-[600px] md:pb-0">
+                            <img
+                                ref={treeRef}
+                                src={TREE_IMAGE}
+                                alt="Christmas Tree"
+                                className="max-h-[55vh] md:max-h-full md:h-full w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
+                            />
+                        </div>
+
+                        {/* Mobile Text (Displayed BELOW tree) */}
+                        <div className="md:hidden mt-4 mb-8 text-center z-0">
+                            <h1 className="text-[2rem] font-black tracking-tighter text-slate-900/30 leading-none">
                                 DECORATE YOUR MAC
                             </h1>
                         </div>
-                    </div>
-
-                    {/* Tree Image */}
-                    <div className="relative z-10 h-[85%] max-w-[600px] w-full flex items-end justify-center pb-20 md:pb-0">
-                        <img
-                            ref={treeRef}
-                            src={TREE_IMAGE}
-                            alt="Christmas Tree"
-                            className="h-full w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
-                        />
                     </div>
 
                     {/* Render Ornaments */}
@@ -318,12 +320,12 @@
                     </div>
 
                     {/* Footer */}
-                    <div className="p-4 border-t border-slate-100 bg-white flex flex-col gap-4">
+                    <div className="p-4 border-t border-slate-100 bg-white flex flex-col gap-4 pb-8 md:pb-4">
                         <Button onClick={onClearAll} variant="outline" className="w-full rounded-xl border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-50 h-11 font-medium">
                             Clear all
                         </Button>
 
-                        {/* MOBILE FOOTER LINKS - Moved Here */}
+                        {/* MOBILE FOOTER LINKS - Strictly under Clear All */}
                         <div className="md:hidden flex flex-col items-center gap-2 pt-1">
                             <div className="flex gap-4 text-sm font-medium text-slate-500">
                                 <a href="contact/" className="hover:text-slate-900 transition-colors">Contact</a>
@@ -394,7 +396,7 @@
                                     © 2025 JoliTree. All rights reserved.
                                 </div>
                             </div>
-                            {/* Help Button Removed on Mobile */}
+                            {/* Removed Help Icon on Mobile */}
                             <button className="hidden md:flex w-8 h-8 items-center justify-center bg-slate-900 text-white rounded-full shadow-md pointer-events-auto">
                                 <HelpIcon />
                             </button>
