@@ -88,7 +88,10 @@
         const TREE_IMAGE = 'images/tree-bg.png';
 
         // --- ICONS ---
-        // (HelpIcon removed as requested)
+        const HelpIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+        );
+
         const InfoIcon = ({ className }) => (
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
                 <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clipRule="evenodd" />
@@ -219,7 +222,7 @@
             }, []);
 
             return (
-                <div ref={canvasRef} className="relative w-full h-full flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white">
+                <div ref={canvasRef} className="relative w-full h-full flex flex-col md:block items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white">
                     
                     {/* Background Animation */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
@@ -241,21 +244,20 @@
                     </div>
 
                     {/* --- TREE CONTAINER --- */}
-                    <div className="relative z-10 flex flex-col items-center justify-center w-full h-full md:h-[85%] md:w-auto">
+                    <div className="relative z-10 flex flex-col items-center justify-center h-full w-full md:block md:h-[85%] md:w-auto">
                         
                         {/* Tree Image */}
-                        <!-- Mobile: max-h-[55vh] to prevent cropping | Desktop: h-full (within the 85% parent) -->
                         <div className="flex-1 flex items-center md:items-end justify-center w-full md:pb-0">
                             <img
                                 ref={treeRef}
                                 src={TREE_IMAGE}
                                 alt="Christmas Tree"
-                                className="max-h-[55vh] md:max-h-full w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
+                                className="max-h-[40vh] md:max-h-full w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
                             />
                         </div>
 
                         {/* Mobile Text (Displayed BELOW tree) */}
-                        <div className="md:hidden mt-6 mb-4 text-center z-0 px-4 shrink-0">
+                        <div className="md:hidden mt-2 mb-4 text-center z-0 px-4 shrink-0">
                             <h1 className="text-[2.2rem] font-black tracking-tighter text-slate-900/20 leading-none">
                                 DECORATE YOUR MAC
                             </h1>
@@ -323,7 +325,7 @@
                             Clear all
                         </Button>
 
-                        {/* MOBILE FOOTER LINKS - Strictly under Clear All */}
+                        {/* MOBILE FOOTER LINKS */}
                         <div className="md:hidden flex flex-col items-center gap-2 pt-1">
                             <div className="flex gap-4 text-sm font-medium text-slate-500">
                                 <a href="contact/" className="hover:text-slate-900 transition-colors">Contact</a>
