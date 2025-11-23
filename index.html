@@ -37,13 +37,13 @@
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        body { 
-            overscroll-behavior: none; 
+
+        body {
+            overscroll-behavior: none;
             background-color: #F8FAFC;
             -webkit-font-smoothing: antialiased;
         }
-        
+
         .select-none { user-select: none; -webkit-user-select: none; }
 
         /* Gradient Animation */
@@ -63,7 +63,7 @@
             from { opacity: 0; transform: translate(-50%, 40px); }
             to { opacity: 1; transform: translate(-50%, 0); }
         }
-        
+
         .animate-fade-in-up {
             animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
@@ -75,357 +75,450 @@
     </style>
 </head>
 <body>
-    <div id="root"></div>
+<div id="root"></div>
 
-    <!-- 4. REACT APPLICATION -->
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+<!-- 4. REACT APPLICATION -->
+<script type="text/babel">
+    const { useState, useEffect, useRef } = React;
 
-        // --- ASSETS ---
-        const ORNAMENT_TYPES = {
-            RED_BALL: { id: 'redBall', displayName: 'Red ball', image: 'images/ornaments/ornament_red.png' },
-            BLUE_BALL: { id: 'blueBall', displayName: 'Blue ball', image: 'images/ornaments/ornament_blue.png' },
-            STAR: { id: 'star', displayName: 'Star', image: 'images/ornaments/ornament_star.png' },
-            CANDY_CANE: { id: 'candyCane', displayName: 'Candy cane', image: 'images/ornaments/ornament_candy_cane.png' },
-            GIFT: { id: 'gift', displayName: 'Gift', image: 'images/ornaments/ornament_gift.png' }
+    // --- ASSETS ---
+    const ORNAMENT_TYPES = {
+        RED_BALL: { id: 'redBall', displayName: 'Red ball', image: 'images/ornaments/ornament_red.png' },
+        BLUE_BALL: { id: 'blueBall', displayName: 'Blue ball', image: 'images/ornaments/ornament_blue.png' },
+        STAR: { id: 'star', displayName: 'Star', image: 'images/ornaments/ornament_star.png' },
+        CANDY_CANE: { id: 'candyCane', displayName: 'Candy cane', image: 'images/ornaments/ornament_candy_cane.png' },
+        GIFT: { id: 'gift', displayName: 'Gift', image: 'images/ornaments/ornament_gift.png' }
+    };
+
+    const TREE_IMAGE = 'images/tree-bg.png';
+
+    // --- ICONS ---
+    const HelpIcon = () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+    );
+
+    const InfoIcon = ({ className }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+            <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clipRule="evenodd" />
+        </svg>
+    );
+
+    // --- UI COMPONENTS ---
+    const Button = ({ onClick, children, variant = 'default', className = '' }) => {
+        const baseStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50";
+
+        const variants = {
+            default: "bg-slate-900 text-slate-50 hover:bg-slate-900/90 shadow transition-colors duration-200",
+            outline: "border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200",
+            ghost: "hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200"
         };
-
-        const TREE_IMAGE = 'images/tree-bg.png';
-
-        // --- ICONS ---
-        const HelpIcon = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+        return (
+            <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`}>
+                {children}
+            </button>
         );
+    };
 
-        const InfoIcon = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-                <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clipRule="evenodd" />
-            </svg>
-        );
-
-        // --- UI COMPONENTS ---
-        const Button = ({ onClick, children, variant = 'default', className = '' }) => {
-            const baseStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50";
-            
-            const variants = {
-                default: "bg-slate-900 text-slate-50 hover:bg-slate-900/90 shadow transition-colors duration-200",
-                outline: "border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200",
-                ghost: "hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200"
-            };
-            return (
-                <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`}>
-                    {children}
-                </button>
-            );
+    function useLocalStorage(key, initialValue) {
+        const [storedValue, setStoredValue] = useState(() => {
+            try {
+                const item = window.localStorage.getItem(key);
+                return item ? JSON.parse(item) : initialValue;
+            } catch (error) {
+                return initialValue;
+            }
+        });
+        const setValue = (value) => {
+            try {
+                const valueToStore = value instanceof Function ? value(storedValue) : value;
+                setStoredValue(valueToStore);
+                window.localStorage.setItem(key, JSON.stringify(valueToStore));
+            } catch (error) { console.log(error); }
         };
+        return [storedValue, setValue];
+    }
 
-        function useLocalStorage(key, initialValue) {
-            const [storedValue, setStoredValue] = useState(() => {
-                try {
-                    const item = window.localStorage.getItem(key);
-                    return item ? JSON.parse(item) : initialValue;
-                } catch (error) {
-                    return initialValue;
-                }
-            });
-            const setValue = (value) => {
-                try {
-                    const valueToStore = value instanceof Function ? value(storedValue) : value;
-                    setStoredValue(valueToStore);
-                    window.localStorage.setItem(key, JSON.stringify(valueToStore));
-                } catch (error) { console.log(error); }
-            };
-            return [storedValue, setValue];
-        }
+    // --- FEATURE COMPONENTS ---
 
-        // --- FEATURE COMPONENTS ---
+    function OrnamentView({ ornament, treeBounds, onPositionUpdate }) {
+        const [isDragging, setIsDragging] = useState(false);
+        const [isHovered, setIsHovered] = useState(false);
+        const dragStartRef = useRef({ x: 0, y: 0 });
+        const type = Object.values(ORNAMENT_TYPES).find(t => t.id === ornament.kind);
 
-        function OrnamentView({ ornament, treeBounds, onPositionUpdate }) {
-            const [isDragging, setIsDragging] = useState(false);
-            const [isHovered, setIsHovered] = useState(false);
-            const dragStartRef = useRef({ x: 0, y: 0 });
-            const type = Object.values(ORNAMENT_TYPES).find(t => t.id === ornament.kind);
+        const left = treeBounds.left + (ornament.x * treeBounds.width);
+        const top = treeBounds.top + (ornament.y * treeBounds.height);
 
-            const left = treeBounds.left + (ornament.x * treeBounds.width);
-            const top = treeBounds.top + (ornament.y * treeBounds.height);
-
-            useEffect(() => {
-                if (!isDragging) return;
-                const handleMove = (clientX, clientY) => {
-                    const dx = clientX - dragStartRef.current.x;
-                    const dy = clientY - dragStartRef.current.y;
-                    dragStartRef.current = { x: clientX, y: clientY };
-                    onPositionUpdate(ornament.id, dx, dy);
-                };
-                const onMouseMove = (e) => handleMove(e.clientX, e.clientY);
-                const onTouchMove = (e) => { e.preventDefault(); handleMove(e.touches[0].clientX, e.touches[0].clientY); };
-                const onEnd = () => setIsDragging(false);
-
-                window.addEventListener('mousemove', onMouseMove);
-                window.addEventListener('mouseup', onEnd);
-                window.addEventListener('touchmove', onTouchMove, { passive: false });
-                window.addEventListener('touchend', onEnd);
-                return () => {
-                    window.removeEventListener('mousemove', onMouseMove);
-                    window.removeEventListener('mouseup', onEnd);
-                    window.removeEventListener('touchmove', onTouchMove);
-                    window.removeEventListener('touchend', onEnd);
-                };
-            }, [isDragging, ornament.id, onPositionUpdate]);
-
-            const startDrag = (clientX, clientY) => {
-                setIsDragging(true);
+        useEffect(() => {
+            if (!isDragging) return;
+            const handleMove = (clientX, clientY) => {
+                const dx = clientX - dragStartRef.current.x;
+                const dy = clientY - dragStartRef.current.y;
                 dragStartRef.current = { x: clientX, y: clientY };
+                onPositionUpdate(ornament.id, dx, dy);
             };
+            const onMouseMove = (e) => handleMove(e.clientX, e.clientY);
+            const onTouchMove = (e) => { e.preventDefault(); handleMove(e.touches[0].clientX, e.touches[0].clientY); };
+            const onEnd = () => setIsDragging(false);
 
-            return (
-                <div
-                    className="absolute z-20 cursor-grab active:cursor-grabbing select-none"
-                    style={{ left: left, top: top, transform: 'translate(-50%, -50%)', touchAction: 'none' }}
-                    onMouseDown={(e) => { e.preventDefault(); startDrag(e.clientX, e.clientY); }}
-                    onTouchStart={(e) => { startDrag(e.touches[0].clientX, e.touches[0].clientY); }}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
-                >
-                    <div className="relative group">
-                        <img 
-                            src={type.image} alt={type.displayName} 
-                            className="w-16 h-16 object-contain drop-shadow-lg pointer-events-none select-none transition-transform duration-200 active:scale-110" 
-                        />
-                        {isHovered && !isDragging && (
-                            <div className="absolute inset-0 border-2 border-dashed border-blue-400/50 rounded-full animate-pulse pointer-events-none"></div>
-                        )}
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onEnd);
+            window.addEventListener('touchmove', onTouchMove, { passive: false });
+            window.addEventListener('touchend', onEnd);
+            return () => {
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onEnd);
+                window.removeEventListener('touchmove', onTouchMove);
+                window.removeEventListener('touchend', onEnd);
+            };
+        }, [isDragging, ornament.id, onPositionUpdate]);
+
+        const startDrag = (clientX, clientY) => {
+            setIsDragging(true);
+            dragStartRef.current = { x: clientX, y: clientY };
+        };
+
+        return (
+            <div
+                className="absolute z-20 cursor-grab active:cursor-grabbing select-none"
+                style={{ left: left, top: top, transform: 'translate(-50%, -50%)', touchAction: 'none' }}
+                onMouseDown={(e) => { e.preventDefault(); startDrag(e.clientX, e.clientY); }}
+                onTouchStart={(e) => { startDrag(e.touches[0].clientX, e.touches[0].clientY); }}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                <div className="relative group">
+                    <img
+                        src={type.image} alt={type.displayName}
+                        className="w-16 h-16 object-contain drop-shadow-lg pointer-events-none select-none transition-transform duration-200 active:scale-110"
+                    />
+                    {isHovered && !isDragging && (
+                        <div className="absolute inset-0 border-2 border-dashed border-blue-400/50 rounded-full animate-pulse pointer-events-none"></div>
+                    )}
+                </div>
+            </div>
+        );
+    }
+
+    /* DESKTOP TREE CANVAS (unchanged visually) */
+    function DesktopTreeCanvas({ ornaments, onPositionUpdate }) {
+        const treeRef = useRef(null);
+        const canvasRef = useRef(null);
+        const [treeBounds, setTreeBounds] = useState({ width: 0, height: 0, left: 0, top: 0 });
+
+        const updateBounds = () => {
+            if (treeRef.current && canvasRef.current) {
+                const treeRect = treeRef.current.getBoundingClientRect();
+                const canvasRect = canvasRef.current.getBoundingClientRect();
+                setTreeBounds({
+                    width: treeRect.width,
+                    height: treeRect.height,
+                    left: treeRect.left - canvasRect.left,
+                    top: treeRect.top - canvasRect.top
+                });
+            }
+        };
+
+        useEffect(() => {
+            updateBounds();
+            window.addEventListener('resize', updateBounds);
+            const img = treeRef.current;
+            if (img) img.addEventListener('load', updateBounds);
+            return () => {
+                window.removeEventListener('resize', updateBounds);
+                if (img) img.removeEventListener('load', updateBounds);
+            };
+        }, []);
+
+        return (
+            <div ref={canvasRef} className="relative w-full h-full overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white">
+                {/* Background Animation */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                    <div className="w-[600px] h-[600px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
+                </div>
+
+                {/* Background Text Layer (Desktop) */}
+                <div className="absolute inset-0 w-full h-full z-0 pointer-events-none select-none">
+                    <div className="absolute left-[2%] xl:left-[5%] top-1/2 -translate-y-[60%] text-right z-0">
+                        <h1 className="text-[3.5rem] lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter text-slate-900 leading-[0.85] text-center">
+                            DECORATE<br />YOUR<br />MAC
+                        </h1>
+                    </div>
+                    <div className="absolute right-[5%] xl:right-[8%] top-1/2 -translate-y-[30%] text-left z-0">
+                        <h1 className="text-[3.5rem] lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter text-slate-900 leading-[0.85]">
+                            WORK<br />WITH<br />FESTIVE<br />VIBE
+                        </h1>
                     </div>
                 </div>
-            );
-        }
 
-        function TreeCanvas({ ornaments, onPositionUpdate }) {
-            const treeRef = useRef(null);
-            const canvasRef = useRef(null);
-            const [treeBounds, setTreeBounds] = useState({ width: 0, height: 0, left: 0, top: 0 });
+                {/* Tree */}
+                <div className="relative z-10 flex items-center justify-center w-full h-full pointer-events-none">
+                    <img
+                        ref={treeRef}
+                        src={TREE_IMAGE}
+                        className="max-h-[75vh] w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
+                        alt="Christmas Tree"
+                    />
+                </div>
 
-            const updateBounds = () => {
-                if (treeRef.current && canvasRef.current) {
-                    const treeRect = treeRef.current.getBoundingClientRect();
-                    const canvasRect = canvasRef.current.getBoundingClientRect();
-                    setTreeBounds({
-                        width: treeRect.width,
-                        height: treeRect.height,
-                        left: treeRect.left - canvasRect.left,
-                        top: treeRect.top - canvasRect.top
-                    });
-                }
+                {/* Ornaments */}
+                {treeBounds.width > 0 && ornaments.map(orn => (
+                    <OrnamentView key={orn.id} ornament={orn} treeBounds={treeBounds} onPositionUpdate={onPositionUpdate} />
+                ))}
+            </div>
+        );
+    }
+
+    /* MOBILE TREE CANVAS – centered tree + black text below */
+    function MobileTreeCanvas({ ornaments, onPositionUpdate }) {
+        const treeRef = useRef(null);
+        const canvasRef = useRef(null);
+        const [treeBounds, setTreeBounds] = useState({ width: 0, height: 0, left: 0, top: 0 });
+
+        const updateBounds = () => {
+            if (treeRef.current && canvasRef.current) {
+                const treeRect = treeRef.current.getBoundingClientRect();
+                const canvasRect = canvasRef.current.getBoundingClientRect();
+                setTreeBounds({
+                    width: treeRect.width,
+                    height: treeRect.height,
+                    left: treeRect.left - canvasRect.left,
+                    top: treeRect.top - canvasRect.top
+                });
+            }
+        };
+
+        useEffect(() => {
+            updateBounds();
+            window.addEventListener('resize', updateBounds);
+            const img = treeRef.current;
+            if (img) img.addEventListener('load', updateBounds);
+            return () => {
+                window.removeEventListener('resize', updateBounds);
+                if (img) img.removeEventListener('load', updateBounds);
             };
+        }, []);
 
-            useEffect(() => {
-                updateBounds();
-                window.addEventListener('resize', updateBounds);
-                const img = treeRef.current;
-                if (img) img.addEventListener('load', updateBounds);
-                return () => window.removeEventListener('resize', updateBounds);
-            }, []);
+        return (
+            <div
+                ref={canvasRef}
+                className="relative w-full h-full flex flex-col items-center justify-start overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white"
+            >
+                {/* Background Animation */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                    <div className="w-[500px] h-[500px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
+                </div>
 
-            return (
-                <div ref={canvasRef} className="relative w-full h-full md:h-full flex flex-col md:block items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white">
-                    
-                    {/* Background Animation */}
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                        <div className="w-[600px] h-[600px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
+                {/* Tree area – taller & centered */}
+                <div className="relative z-10 flex-1 flex items-center justify-center pt-4 pb-2">
+                    <img
+                        ref={treeRef}
+                        src={TREE_IMAGE}
+                        className="max-h-[60vh] w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
+                        alt="Christmas Tree"
+                    />
+                </div>
+
+                {/* Black text below the tree */}
+                <div className="relative z-10 w-full px-4 pb-4 text-center">
+                    <h1 className="text-[2.2rem] font-black tracking-tight text-slate-900 leading-none">
+                        DECORATE YOUR MAC
+                    </h1>
+                </div>
+
+                {/* Ornaments */}
+                {treeBounds.width > 0 && ornaments.map(orn => (
+                    <OrnamentView key={orn.id} ornament={orn} treeBounds={treeBounds} onPositionUpdate={onPositionUpdate} />
+                ))}
+            </div>
+        );
+    }
+
+    function OrnamentPalette({ onAddOrnament, onClearAll }) {
+        const types = Object.values(ORNAMENT_TYPES);
+
+        return (
+            <div className="flex flex-col h-full bg-white border-r border-slate-200 relative z-20">
+                <div className="p-6 border-b border-slate-100 hidden md:block">
+                    <h2 className="text-slate-900 text-2xl font-bold tracking-tight">JoliTree</h2>
+                </div>
+
+                {/* Desktop List - COMPACT MODE */}
+                <div className="hidden md:flex flex-1 overflow-y-auto p-4 flex-col gap-2">
+                    {types.map((type) => (
+                        <button
+                            key={type.id}
+                            onClick={() => onAddOrnament(type.id)}
+                            className="w-full group flex items-center gap-3 p-2 bg-white border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-sm transition-colors duration-200 text-left focus:outline-none focus:ring-2 focus:ring-slate-200"
+                        >
+                            <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                                <img src={type.image} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-200" />
+                            </div>
+                            <span className="font-medium text-sm text-slate-700 group-hover:text-slate-900">{type.displayName}</span>
+                        </button>
+                    ))}
+
+                    {/* Info Message */}
+                    <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-100 flex gap-2 items-start">
+                        <InfoIcon className="w-4 h-4 text-slate-900 mt-0.5 shrink-0" />
+                        <p className="text-[11px] text-slate-600 leading-relaxed">
+                            The real app includes much more than this preview: a full lights-creation tool, advanced settings, and lots of extra.
+                        </p>
                     </div>
+                </div>
 
-                    {/* --- BACKGROUND TEXT LAYER (DESKTOP) --- */}
-                    <div className="absolute inset-0 w-full h-full z-0 pointer-events-none select-none hidden md:block">
-                        <div className="absolute left-[2%] xl:left-[5%] top-1/2 -translate-y-[60%] text-right z-0">
-                            <h1 className="text-[3.5rem] lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter text-slate-900 leading-[0.85] text-center">
-                                DECORATE<br/>YOUR<br/>MAC
-                            </h1>
-                        </div>
-                        <div className="absolute right-[5%] xl:right-[8%] top-1/2 -translate-y-[30%] text-left z-0">
-                            <h1 className="text-[3.5rem] lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter text-slate-900 leading-[0.85]">
-                                WORK<br/>WITH<br/>FESTIVE<br/>VIBE
-                            </h1>
-                        </div>
-                    </div>
-
-                    {/* --- TREE & MOBILE TEXT CONTAINER --- */}
-                    <div className="relative z-10 flex items-center justify-center w-full h-full pointer-events-none">
-                        
-                        <div className="relative flex items-center justify-center w-full h-full pointer-events-none">
-                            <img
-                                ref={treeRef}
-                                src={TREE_IMAGE}
-                                className="max-h-[75vh] w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
-                                alt="Christmas Tree"
-                            />
-                        </div>
-
-                        {/* Mobile Text (Displayed BELOW tree, not overlapping) */}
-                        <div className="md:hidden mt-2 mb-4 text-center z-0 px-4">
-                            <h1 className="text-[2.2rem] font-black tracking-tighter text-slate-900/20 leading-none">
-                                DECORATE YOUR MAC
-                            </h1>
-                        </div>
-                    </div>
-
-                    {/* Render Ornaments */}
-                    {treeBounds.width > 0 && ornaments.map(orn => (
-                        <OrnamentView key={orn.id} ornament={orn} treeBounds={treeBounds} onPositionUpdate={onPositionUpdate} />
+                {/* Mobile List */}
+                <div className="md:hidden flex-1 flex items-center overflow-x-auto p-3 gap-3 no-scrollbar">
+                    {types.map((type) => (
+                        <button
+                            key={type.id}
+                            onClick={() => onAddOrnament(type.id)}
+                            className="flex-shrink-0 flex flex-col items-center justify-center w-20 h-20 bg-white border border-slate-200 rounded-xl active:scale-95 transition-transform shadow-sm"
+                        >
+                            <img src={type.image} className="w-9 h-9 object-contain mb-1" />
+                            <span className="text-[10px] font-medium text-slate-600 leading-tight text-center">{type.displayName}</span>
+                        </button>
                     ))}
                 </div>
-            );
-        }
 
-        function OrnamentPalette({ onAddOrnament, onClearAll }) {
-            const types = Object.values(ORNAMENT_TYPES);
+                {/* Footer */}
+                <div className="p-4 border-t border-slate-100 bg-white flex flex-col gap-4 pb-8 md:pb-4">
+                    <Button onClick={onClearAll} variant="outline" className="w-full rounded-xl border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-50 h-11 font-medium">
+                        Clear all
+                    </Button>
 
-            return (
-                <div className="flex flex-col h-full bg-white border-r border-slate-200 relative z-20">
-                    <div className="p-6 border-b border-slate-100 hidden md:block">
-                        <h2 className="text-slate-900 text-2xl font-bold tracking-tight">JoliTree</h2>
-                    </div>
-                    
-                    {/* Desktop List - COMPACT MODE */}
-                    <div className="hidden md:flex flex-1 overflow-y-auto p-4 flex-col gap-2">
-                        {types.map((type) => (
-                            <button
-                                key={type.id}
-                                onClick={() => onAddOrnament(type.id)}
-                                className="w-full group flex items-center gap-3 p-2 bg-white border border-slate-200 rounded-xl hover:border-slate-300 hover:shadow-sm transition-colors duration-200 text-left focus:outline-none focus:ring-2 focus:ring-slate-200"
-                            >
-                                <div className="w-8 h-8 flex items-center justify-center shrink-0">
-                                    <img src={type.image} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-200" />
-                                </div>
-                                <span className="font-medium text-sm text-slate-700 group-hover:text-slate-900">{type.displayName}</span>
-                            </button>
-                        ))}
-
-                        {/* Info Message */}
-                        <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-100 flex gap-2 items-start">
-                            <InfoIcon className="w-4 h-4 text-slate-900 mt-0.5 shrink-0" />
-                            <p className="text-[11px] text-slate-600 leading-relaxed">
-                                The real app includes much more than this preview: a full lights-creation tool, advanced settings, and lots of extra.
-                            </p>
+                    {/* MOBILE FOOTER LINKS & COPYRIGHT */}
+                    <div className="md:hidden flex flex-col items-center gap-3 pt-1 pb-4">
+                        <div className="flex gap-4 text-sm font-medium text-slate-500">
+                            <a href="contact/" className="hover:text-slate-900 transition-colors">Contact</a>
+                            <a href="privacy/" className="hover:text-slate-900 transition-colors">Privacy</a>
+                            <a href="terms/" className="hover:text-slate-900 transition-colors">Terms</a>
+                        </div>
+                        <div className="text-[10px] text-slate-400">
+                            © 2025 JoliTree. All rights reserved.
                         </div>
                     </div>
+                </div>
+            </div>
+        );
+    }
 
-                    {/* Mobile List */}
-                    <div className="md:hidden flex-1 flex items-center overflow-x-auto p-3 gap-3 no-scrollbar">
-                        {types.map((type) => (
-                            <button
-                                key={type.id}
-                                onClick={() => onAddOrnament(type.id)}
-                                className="flex-shrink-0 flex flex-col items-center justify-center w-20 h-20 bg-white border border-slate-200 rounded-xl active:scale-95 transition-transform shadow-sm"
-                            >
-                                <img src={type.image} className="w-9 h-9 object-contain mb-1" />
-                                <span className="text-[10px] font-medium text-slate-600 leading-tight text-center">{type.displayName}</span>
-                            </button>
-                        ))}
-                    </div>
+    function App() {
+        const [ornaments, setOrnaments] = useLocalStorage('jolitree-ornaments-v4', [{
+            id: 'init-red',
+            kind: 'redBall',
+            x: 0.55,
+            y: 0.45
+        }]);
 
-                    {/* Footer */}
-                    <div className="p-4 border-t border-slate-100 bg-white flex flex-col gap-4 pb-8 md:pb-4">
-                        <Button onClick={onClearAll} variant="outline" className="w-full rounded-xl border-slate-300 text-slate-600 hover:text-slate-900 hover:bg-slate-50 h-11 font-medium">
-                            Clear all
-                        </Button>
+        const addOrnament = (kindId) => {
+            const newOrnament = {
+                id: crypto.randomUUID(),
+                kind: kindId,
+                x: 0.5 + (Math.random() * 0.1 - 0.05),
+                y: 0.4 + (Math.random() * 0.1 - 0.05)
+            };
+            setOrnaments([...ornaments, newOrnament]);
+        };
 
-                        {/* MOBILE FOOTER LINKS & COPYRIGHT - Pushed down here */}
-                        <div className="md:hidden flex flex-col items-center gap-3 pt-1 pb-4">
-                            <div className="flex gap-4 text-sm font-medium text-slate-500">
+        const updateOrnamentPosition = (id, dx, dy) => {
+            setOrnaments(prev => prev.map(orn => {
+                if (orn.id !== id) return orn;
+
+                const canvas = document.querySelector('[data-canvas]');
+                if (!canvas) return orn;
+
+                // pick visible tree image (desktop or mobile)
+                const images = canvas.querySelectorAll('img[alt="Christmas Tree"]');
+                let treeImg = null;
+                images.forEach(img => {
+                    const rect = img.getBoundingClientRect();
+                    if (rect.width > 0 && rect.height > 0 && !treeImg) {
+                        treeImg = img;
+                    }
+                });
+
+                if (!treeImg) return orn;
+                const rect = treeImg.getBoundingClientRect();
+                if (!rect.width || !rect.height) return orn;
+
+                return {
+                    ...orn,
+                    x: Math.max(0, Math.min(1, orn.x + (dx / rect.width))),
+                    y: Math.max(0, Math.min(1, orn.y + (dy / rect.height)))
+                };
+            }));
+        };
+
+        const resetOrnaments = () => {
+            if (confirm("Remove all ornaments?")) setOrnaments([]);
+        };
+
+        return (
+            <div className="h-[100dvh] w-full flex flex-col md:flex-row overflow-hidden bg-[#F8FAFC]">
+                {/* Mobile Header */}
+                <div className="md:hidden flex justify-center py-4 bg-gradient-to-b from-slate-100 via-slate-50 to-white z-10 shrink-0">
+                    <a href="#" className="px-6 py-2.5 bg-slate-900 text-white rounded-full text-sm font-medium shadow-lg">
+                        Download for MacOS
+                    </a>
+                </div>
+
+                {/* Sidebar */}
+                <div className="hidden md:block w-[280px] shrink-0 h-full shadow-xl shadow-slate-200/50 z-20">
+                    <OrnamentPalette onAddOrnament={addOrnament} onClearAll={resetOrnaments} />
+                </div>
+
+                {/* Main Content */}
+                <main className="flex-1 relative h-full flex flex-col overflow-hidden" data-canvas>
+                    {/* Header Links */}
+                    <div className="absolute top-0 right-0 left-0 p-6 flex justify-between md:justify-end items-start z-30 pointer-events-none">
+                        <span className="md:hidden text-xl font-bold text-slate-900 pointer-events-auto">JoliTree</span>
+                        <div className="hidden md:flex flex-col items-center gap-1 pointer-events-auto">
+                            <nav className="flex gap-5 text-[15px] font-medium text-slate-600">
                                 <a href="contact/" className="hover:text-slate-900 transition-colors">Contact</a>
                                 <a href="privacy/" className="hover:text-slate-900 transition-colors">Privacy</a>
                                 <a href="terms/" className="hover:text-slate-900 transition-colors">Terms</a>
-                            </div>
-                            <div className="text-[10px] text-slate-400">
+                            </nav>
+                            <div className="text-[10px] text-slate-400 tracking-wide">
                                 © 2025 JoliTree. All rights reserved.
                             </div>
                         </div>
                     </div>
-                </div>
-            );
-        }
 
-        function App() {
-            const [ornaments, setOrnaments] = useLocalStorage('jolitree-ornaments-v4', [{
-                id: 'init-red', 
-                kind: 'redBall', 
-                x: 0.55, 
-                y: 0.45
-            }]);
+                    {/* Canvas */}
+                    <div className="flex-1 relative w-full h-full overflow-hidden">
+                        {/* Desktop tree */}
+                        <div className="hidden md:block w-full h-full">
+                            <DesktopTreeCanvas ornaments={ornaments} onPositionUpdate={updateOrnamentPosition} />
+                        </div>
 
-            const addOrnament = (kindId) => {
-                const newOrnament = { id: crypto.randomUUID(), kind: kindId, x: 0.5 + (Math.random() * 0.1 - 0.05), y: 0.4 + (Math.random() * 0.1 - 0.05) };
-                setOrnaments([...ornaments, newOrnament]);
-            };
+                        {/* Mobile tree */}
+                        <div className="md:hidden w-full h-full">
+                            <MobileTreeCanvas ornaments={ornaments} onPositionUpdate={updateOrnamentPosition} />
+                        </div>
 
-            const updateOrnamentPosition = (id, dx, dy) => {
-                setOrnaments(prev => prev.map(orn => {
-                    if (orn.id !== id) return orn;
-                    const canvas = document.querySelector('[data-canvas]');
-                    const treeImg = canvas?.querySelector('img[alt="Christmas Tree"]');
-                    if (!treeImg) return orn;
-                    const rect = treeImg.getBoundingClientRect();
-                    return { ...orn, x: Math.max(0, Math.min(1, orn.x + (dx / rect.width))), y: Math.max(0, Math.min(1, orn.y + (dy / rect.height))) };
-                }));
-            };
-
-            const resetOrnaments = () => { if(confirm("Remove all ornaments?")) setOrnaments([]); };
-
-            return (
-                <div className="h-[100dvh] w-full flex flex-col md:flex-row overflow-hidden bg-[#F8FAFC]">
-                    
-                    {/* Mobile Header */}
-                    <div className="md:hidden flex justify-center py-4 bg-gradient-to-b from-slate-100 via-slate-50 to-white z-10 shrink-0">
-                        <a href="#" className="px-6 py-2.5 bg-slate-900 text-white rounded-full text-sm font-medium shadow-lg">Download for MacOS</a>
+                        {/* Floating Button (desktop only) */}
+                        <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto animate-fade-in-up">
+                            <a
+                                href="#"
+                                className="px-8 py-4 bg-[#0F172A] hover:bg-[#1E293B] text-white text-lg font-medium rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-transform transition-colors duration-300"
+                            >
+                                Download for MacOS
+                            </a>
+                        </div>
                     </div>
 
-                    {/* Sidebar */}
-                    <div className="hidden md:block w-[280px] shrink-0 h-full shadow-xl shadow-slate-200/50 z-20">
+                    {/* Mobile Bottom Palette */}
+                    <div className="md:hidden h-auto border-t border-slate-200 bg-white z-20 shrink-0 pb-safe">
                         <OrnamentPalette onAddOrnament={addOrnament} onClearAll={resetOrnaments} />
                     </div>
+                </main>
+            </div>
+        );
+    }
 
-                    {/* Main Content */}
-                    <main className="flex-1 relative h-full flex flex-col overflow-hidden" data-canvas>
-                        
-                        {/* Header Links */}
-                        <div className="absolute top-0 right-0 left-0 p-6 flex justify-between md:justify-end items-start z-30 pointer-events-none">
-                            <span className="md:hidden text-xl font-bold text-slate-900 pointer-events-auto">JoliTree</span>
-                            <div className="hidden md:flex flex-col items-center gap-1 pointer-events-auto">
-                                <nav className="flex gap-5 text-[15px] font-medium text-slate-600">
-                                    <a href="contact/" className="hover:text-slate-900 transition-colors">Contact</a>
-                                    <a href="privacy/" className="hover:text-slate-900 transition-colors">Privacy</a>
-                                    <a href="terms/" className="hover:text-slate-900 transition-colors">Terms</a>
-                                </nav>
-                                <div className="text-[10px] text-slate-400 tracking-wide">
-                                    © 2025 JoliTree. All rights reserved.
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Canvas */}
-                        <div className="flex-1 relative w-full h-full overflow-hidden">
-                            <TreeCanvas ornaments={ornaments} onPositionUpdate={updateOrnamentPosition} />
-
-                            {/* Floating Button (WITH ANIMATION) */}
-                            <div className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto animate-fade-in-up">
-                                <a href="#" className="px-8 py-4 bg-[#0F172A] hover:bg-[#1E293B] text-white text-lg font-medium rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-transform transition-colors duration-300">
-                                    Download for MacOS
-                                </a>
-                            </div>
-                        </div>
-
-                        {/* Mobile Bottom Palette */}
-                        <div className="md:hidden h-auto border-t border-slate-200 bg-white z-20 shrink-0 pb-safe">
-                            <OrnamentPalette onAddOrnament={addOrnament} onClearAll={resetOrnaments} />
-                        </div>
-
-                    </main>
-                </div>
-            );
-        }
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+</script>
 </body>
 </html>
