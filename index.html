@@ -301,36 +301,41 @@
 
         return (
             <div
-                ref={canvasRef}
-                className="relative w-full h-full flex flex-col items-center justify-start overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white"
-            >
-                {/* Background Animation */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                    <div className="w-[500px] h-[500px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
-                </div>
+  ref={canvasRef}
+  className="relative w-full h-full flex flex-col items-center justify-start overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white"
+>
+  {/* Background Animation */}
+  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+    <div className="w-[500px] h-[500px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
+  </div>
 
-                {/* Tree area – taller & centered */}
-                <div className="relative z-10 flex-1 flex items-center justify-center pt-0 pb-0">
-                    <img
-                        ref={treeRef}
-                        src={TREE_IMAGE}
-                        className="max-h-[60vh] w-auto object-contain drop-shadow-2xl select-none pointer-events-none scale-50 origin-top"
-                        alt="Christmas Tree"
-                    />
-                </div>
+  {/* Tree + text as a single VStack */}
+  <div className="relative z-10 flex-1 flex items-center justify-center">
+    <div className="flex flex-col items-center gap-0 scale-50 origin-top">
+      <img
+        ref={treeRef}
+        src={TREE_IMAGE}
+        className="max-h-[60vh] w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
+        alt="Christmas Tree"
+      />
+      <h1 className="mt-0 text-[2.2rem] font-black tracking-tight text-slate-900 leading-none">
+        DECORATE YOUR MAC
+      </h1>
+    </div>
+  </div>
 
-                {/* Black text below the tree */}
-                <div className="relative z-10 w-full px-4 pb-2 text-center scale-50 origin-top">
-                  <h1 className="text-[2.2rem] font-black tracking-tight text-slate-900 leading-none">
-                    DECORATE YOUR MAC
-                  </h1>
-                </div>
+  {/* Ornaments */}
+  {treeBounds.width > 0 &&
+    ornaments.map(orn => (
+      <OrnamentView
+        key={orn.id}
+        ornament={orn}
+        treeBounds={treeBounds}
+        onPositionUpdate={onPositionUpdate}
+      />
+    ))}
+</div>
 
-                {/* Ornaments */}
-                {treeBounds.width > 0 && ornaments.map(orn => (
-                    <OrnamentView key={orn.id} ornament={orn} treeBounds={treeBounds} onPositionUpdate={onPositionUpdate} />
-                ))}
-            </div>
         );
     }
 
