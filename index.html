@@ -67,6 +67,11 @@
         .animate-fade-in-up {
             animation: fadeInUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
+
+        /* Safe Area for iPhone X+ */
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
     </style>
 </head>
 <body>
@@ -222,14 +227,14 @@
             }, []);
 
             return (
-                <div ref={canvasRef} className="relative w-full h-full flex flex-col md:block items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white">
+                <div ref={canvasRef} className="relative w-full h-[200vh] md:h-full flex flex-col md:block items-center justify-center overflow-hidden bg-gradient-to-b from-slate-50 via-purple-50/10 to-white">
                     
                     {/* Background Animation */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
                         <div className="w-[600px] h-[600px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
                     </div>
 
-                    {/* --- BACKGROUND TEXT LAYER (DESKTOP ONLY) --- */}
+                    {/* --- BACKGROUND TEXT LAYER (DESKTOP) --- */}
                     <div className="absolute inset-0 w-full h-full z-0 pointer-events-none select-none hidden md:block">
                         <div className="absolute left-[2%] xl:left-[5%] top-1/2 -translate-y-[60%] text-right z-0">
                             <h1 className="text-[3.5rem] lg:text-[5rem] xl:text-[6rem] font-black tracking-tighter text-slate-900 leading-[0.85] text-center">
@@ -243,21 +248,21 @@
                         </div>
                     </div>
 
-                    {/* --- TREE CONTAINER --- */}
+                    {/* --- TREE & MOBILE TEXT CONTAINER --- */}
                     <div className="relative z-10 flex flex-col items-center justify-center h-full w-full md:block md:h-[85%] md:w-auto">
                         
-                        {/* Tree Image */}
-                        <div className="flex-1 flex items-center md:items-end justify-center w-full md:pb-0">
+                        {/* Tree Image: Smaller max-height on mobile (40vh) */}
+                        <div className="flex-1 flex items-center md:items-end justify-center w-full h-full md:h-full md:max-w-[600px] md:pb-0">
                             <img
                                 ref={treeRef}
                                 src={TREE_IMAGE}
                                 alt="Christmas Tree"
-                                className="max-h-[40vh] md:max-h-full w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
+                                className="max-h-[40vh] md:max-h-full md:h-full w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
                             />
                         </div>
 
-                        {/* Mobile Text (Displayed BELOW tree) */}
-                        <div className="md:hidden mt-2 mb-4 text-center z-0 px-4 shrink-0">
+                        {/* Mobile Text (Displayed BELOW tree, not overlapping) */}
+                        <div className="md:hidden mt-2 mb-4 text-center z-0 px-4">
                             <h1 className="text-[2.2rem] font-black tracking-tighter text-slate-900/20 leading-none">
                                 DECORATE YOUR MAC
                             </h1>
@@ -325,8 +330,8 @@
                             Clear all
                         </Button>
 
-                        {/* MOBILE FOOTER LINKS */}
-                        <div className="md:hidden flex flex-col items-center gap-2 pt-1">
+                        {/* MOBILE FOOTER LINKS & COPYRIGHT - Pushed down here */}
+                        <div className="md:hidden flex flex-col items-center gap-3 pt-1 pb-4">
                             <div className="flex gap-4 text-sm font-medium text-slate-500">
                                 <a href="contact/" className="hover:text-slate-900 transition-colors">Contact</a>
                                 <a href="privacy/" className="hover:text-slate-900 transition-colors">Privacy</a>
@@ -396,7 +401,10 @@
                                     © 2025 JoliTree. All rights reserved.
                                 </div>
                             </div>
-                            {/* Help Icon Removed */}
+                            {/* Help Icon - Removed on Mobile */}
+                            <button className="hidden md:flex w-8 h-8 items-center justify-center bg-slate-900 text-white rounded-full shadow-md pointer-events-auto">
+                                <HelpIcon />
+                            </button>
                         </div>
 
                         {/* Canvas */}
