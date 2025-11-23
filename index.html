@@ -249,17 +249,16 @@
                     </div>
 
                     {/* --- TREE & MOBILE TEXT CONTAINER --- */}
-                    <div className="relative z-10 flex flex-col items-center justify-center h-full w-full md:block md:h-[85%] md:w-auto">
+                    <div className="relative z-10 flex items-center justify-center w-full h-full pointer-events-none">
                         
-                        {/* Tree Image: Smaller max-height on mobile (40vh) */}
-                        <div className="flex-1 flex items-center md:items-end justify-center w-full h-full md:h-full md:max-w-[600px] md:pb-0">
-                            <img
-                                ref={treeRef}
-                                src={TREE_IMAGE}
-                                alt="Christmas Tree"
-                                className="max-h-[40vh] md:max-h-full md:h-full w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
-                            />
-                        </div>
+                        <div className="relative flex items-center justify-center w-full h-full pointer-events-none">
+    <img
+        ref={treeRef}
+        src={TREE_IMAGE}
+        className="max-h-full w-auto object-contain drop-shadow-2xl select-none pointer-events-none"
+        alt="Christmas Tree"
+    />
+</div>
 
                         {/* Mobile Text (Displayed BELOW tree, not overlapping) */}
                         <div className="md:hidden mt-2 mb-4 text-center z-0 px-4">
