@@ -309,25 +309,22 @@
                     <div className="w-[500px] h-[500px] rounded-full opacity-60 blur-[80px] animate-gradient-cycle"></div>
                 </div>
 
-                {/* Tree + Text stacked together */}
-<div className="relative z-10 w-full flex flex-col items-center -mt-4">
+                {/* Tree area – taller & centered */}
+                <div className="relative z-10 flex-1 flex items-center justify-center pt-4 pb-2">
+                    <img
+                        ref={treeRef}
+                        src={TREE_IMAGE}
+                        className="max-h-[60vh] w-auto object-contain drop-shadow-2xl select-none pointer-events-none scale-50 origin-top"
+                        alt="Christmas Tree"
+                    />
+                </div>
 
-    {/* Tree (scaled 2x smaller) */}
-    <img
-        ref={treeRef}
-        src={TREE_IMAGE}
-        className="max-h-[60vh] w-auto object-contain drop-shadow-2xl select-none pointer-events-none scale-50 origin-top"
-        alt="Christmas Tree"
-    />
-
-    {/* Text (also scaled 2x smaller) */}
-    <div className="relative -mt-10 scale-50 origin-top text-center">
-        <h1 className="text-[2.2rem] font-black tracking-tight text-slate-900 leading-none">
-            DECORATE YOUR MAC
-        </h1>
-    </div>
-
-</div>
+                {/* Black text below the tree */}
+                <div className="relative z-10 w-full px-4 pb-2 -mt-30 text-center scale-50 origin-top">
+                  <h1 className="text-[2.2rem] font-black tracking-tight text-slate-900 leading-none">
+                    DECORATE YOUR MAC
+                  </h1>
+                </div>
 
                 {/* Ornaments */}
                 {treeBounds.width > 0 && ornaments.map(orn => (
