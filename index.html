@@ -246,7 +246,7 @@
     function DesktopTreeCanvas({ ornaments, onPositionUpdate }) {
         const treeRef = useRef(null);
         const canvasRef = useRef(null);
-        the [treeBounds, setTreeBounds] = useState({ width: 0, height: 0, left: 0, top: 0 });
+        const [treeBounds, setTreeBounds] = useState({ width: 0, height: 0, left: 0, top: 0 });
 
         const updateBounds = () => {
             if (treeRef.current && canvasRef.current) {
